@@ -13,25 +13,25 @@ namespace BloodShadowFramework.Operations
 
         public CancellationTokenSource CancellationTokenSource { get; protected set; } = new();
         private readonly Task _task;
-        private readonly Observable<(float progress, OperationTaskProgress taskProgress)> _subject;
+        private readonly Observable<(float progress, OperationTaskProgress taskProgress)> _observable;
         private OperationAwaiter _awaiter;
 
-        public Operation(Func<Task> action, Observable<(float progress, OperationTaskProgress taskProgress)> subject = null)
+        public Operation(Func<Task> action, Observable<(float progress, OperationTaskProgress taskProgress)> observable = null)
         {
             _task = action?.Invoke();
-            _subject = subject;
+            _observable = observable;
             SetupAwaiter();
         }
-        public Operation(Action action, Observable<(float progress, OperationTaskProgress taskProgress)> subject = null)
+        public Operation(Action action, Observable<(float progress, OperationTaskProgress taskProgress)> observable = null)
         {
             _task = Task.Factory.StartNew(action, CancellationTokenSource.Token);
-            _subject = subject;
+            _observable = observable;
             SetupAwaiter();
         }
-        public Operation(Task task, Observable<(float progress, OperationTaskProgress taskProgress)> subject = null)
+        public Operation(Task task, Observable<(float progress, OperationTaskProgress taskProgress)> observable = null)
         {
             _task = task;
-            _subject = subject;
+            _observable = observable;
             SetupAwaiter();
         }
         public Operation() { }
@@ -39,7 +39,7 @@ namespace BloodShadowFramework.Operations
         {
             _awaiter = new(this);
             Progress = 0f;
-            IDisposable disposable = _subject?.Subscribe(data =>
+            IDisposable disposable = _observable?.Subscribe(data =>
             {
                 switch (data.taskProgress)
                 {
@@ -63,7 +63,7 @@ namespace BloodShadowFramework.Operations
         }
         public void Dispose() { GC.SuppressFinalize(this); }
         public virtual OperationAwaiter GetAwaiter() => _awaiter;
-        public virtual object Clone() => new Operation(_task, _subject);
+        public virtual object Clone() => new Operation(_task, _observable);
         public virtual void Wait() { while (!IsDone) { } }
         public virtual void AddCompleted(Action action) { Completed += action; }
 
@@ -83,12 +83,5 @@ namespace BloodShadowFramework.Operations
         }
 
         public static implicit operator Task(Operation operation) => new TaskCompletionSource<int>(operation).Task;
-
-    }
-
-    public enum OperationTaskProgress : byte
-    {
-        Add = 0,
-        Set = 1
     }
 }
