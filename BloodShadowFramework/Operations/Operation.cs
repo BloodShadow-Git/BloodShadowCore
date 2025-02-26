@@ -9,29 +9,29 @@ namespace BloodShadowFramework.Operations
         public virtual bool AllowSceneActivation { get; set; }
         public virtual bool IsDone { get; protected set; }
         public virtual int Priority { get; set; }
-        public event Action Completed;
+        public virtual event Action Completed;
 
         public CancellationTokenSource CancellationTokenSource { get; protected set; } = new();
         private readonly Task _task;
-        private readonly Observable<(float progress, OperationTaskProgress taskProgress)> _observable;
+        private readonly Observable<(float progress, OperationTaskProgress taskProgress)> _subject;
         private OperationAwaiter _awaiter;
 
-        public Operation(Func<Task> action, Observable<(float progress, OperationTaskProgress taskProgress)> observable = null)
+        public Operation(Func<Task> action, Observable<(float progress, OperationTaskProgress taskProgress)> subject = null)
         {
             _task = action?.Invoke();
-            _observable = observable;
+            _subject = subject;
             SetupAwaiter();
         }
-        public Operation(Action action, Observable<(float progress, OperationTaskProgress taskProgress)> observable = null)
+        public Operation(Action action, Observable<(float progress, OperationTaskProgress taskProgress)> subject = null)
         {
             _task = Task.Factory.StartNew(action, CancellationTokenSource.Token);
-            _observable = observable;
+            _subject = subject;
             SetupAwaiter();
         }
-        public Operation(Task task, Observable<(float progress, OperationTaskProgress taskProgress)> observable = null)
+        public Operation(Task task, Observable<(float progress, OperationTaskProgress taskProgress)> subject = null)
         {
             _task = task;
-            _observable = observable;
+            _subject = subject;
             SetupAwaiter();
         }
         public Operation() { }
@@ -39,21 +39,21 @@ namespace BloodShadowFramework.Operations
         {
             _awaiter = new(this);
             Progress = 0f;
-            IDisposable disposable = _observable?.Subscribe(data =>
+            IDisposable disposable = _subject?.Subscribe(data =>
             {
                 switch (data.taskProgress)
                 {
                     case OperationTaskProgress.Add: Progress += data.progress; break;
                     case OperationTaskProgress.Set: Progress = data.progress; break;
                 }
-                Progress = Math.Clamp(Progress, 0f, 1f);
+                Progress = Math.Clamp(Progress, 0, 1);
             });
             Task.Run(() =>
             {
                 while (!CancellationTokenSource.IsCancellationRequested && !_task.IsCompleted)
                 {
                     IsDone = _task.IsCompleted;
-                    Task.Delay(1);
+                    Task.Yield();
                 }
                 disposable?.Dispose();
                 Progress = 1f;
@@ -61,9 +61,9 @@ namespace BloodShadowFramework.Operations
                 IsDone = true;
             });
         }
-        public void Dispose() { GC.SuppressFinalize(this); }
+        public virtual void Dispose() { _task?.Dispose(); CancellationTokenSource.Cancel(); }
         public virtual OperationAwaiter GetAwaiter() => _awaiter;
-        public virtual object Clone() => new Operation(_task, _observable);
+        public virtual object Clone() => new Operation(_task, _subject);
         public virtual void Wait() { while (!IsDone) { } }
         public virtual void AddCompleted(Action action) { Completed += action; }
 
@@ -83,5 +83,6 @@ namespace BloodShadowFramework.Operations
         }
 
         public static implicit operator Task(Operation operation) => new TaskCompletionSource<int>(operation).Task;
+
     }
 }

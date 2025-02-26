@@ -19,33 +19,34 @@ namespace BloodShadowFramework.Operations
             set => Operations.Where((op) => { return op != null; }).ToList().ForEach((op) => { op.Priority = value; });
         }
         public override float Progress => Operations.Where((op) => { return op != null; }).Average((op) => { return op.Progress; });
-        new public event Action Completed;
+        public override event Action Completed;
 
         public readonly List<Operation> Operations;
         private readonly OperationAwaiter _awaiter;
-        private readonly CancellationTokenSource _tokenSource;
+        private CancellationTokenSource _tokenSource;
         private bool _needUpdate;
 
         public OperationCollection()
         {
-            Operations = [];
+            Operations = new();
             _awaiter = new(this);
             _tokenSource = new();
             Task.Run(Await, _tokenSource.Token);
         }
 
-        private void Await()
+        private async void Await()
         {
             while (true)
             {
                 try
                 {
-                    if (IsDone || Progress >= 1f && _needUpdate)
+                    if (_needUpdate)
                     {
-                        _needUpdate = false;
-                        IsDone = true;
+                        foreach (Operation operation in Operations) { await operation; }
                         Completed?.Invoke();
+                        _needUpdate = false;
                     }
+                    await Task.Yield();
                 }
                 catch { }
             }
@@ -53,12 +54,13 @@ namespace BloodShadowFramework.Operations
 
         public OperationCollection(Operation operation) : this() { Add(operation); }
         public OperationCollection(IEnumerable<Operation> operations) : this() { Add(operations); }
+        public OperationCollection(params Operation[] operations) : this() { Add(operations); }
         public OperationCollection(Operation operation, IEnumerable<Operation> operations) : this(operations) { Add(operation); }
 
-        public OperationCollection Merge(OperationCollection operation) { return new([.. Operations, .. operation.Operations]); }
+        public OperationCollection Merge(OperationCollection operation) { return new(Operations.Concat(operation.Operations).ToArray()); }
         public OperationCollection Merge(IEnumerable<OperationCollection> operations)
         {
-            OperationCollection result = this;
+            OperationCollection result = new();
             foreach (OperationCollection operation in operations) { result = result.Merge(operation); }
             return result;
         }
@@ -76,14 +78,14 @@ namespace BloodShadowFramework.Operations
             _needUpdate = true;
         }
 
-        //public void Dispose()
-        //{
-        //    foreach (Operation operation in Operations) { if (operation is IDisposable disposable) { disposable?.Dispose(); } }
-        //    _tokenSource.Cancel();
-        //}
+        public override void Dispose()
+        {
+            foreach (Operation operation in Operations) { if (operation is IDisposable disposable) { disposable?.Dispose(); } }
+            _tokenSource.Cancel();
+        }
         public override OperationAwaiter GetAwaiter() => _awaiter;
         public override object Clone() => new OperationCollection(Operations);
-        public override void Wait() { Task.WaitAll([.. Operations.ConvertAll<Task>(input => input)]); }
+        public override void Wait() { Task.WaitAll(Operations.ConvertAll<Task>(input => input).ToArray()); }
     }
 
 }
