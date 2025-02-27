@@ -50,5 +50,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # URL для загрузки ассетов
           asset_path: ./publish/BloodShadowFramework.dll # Путь к вашей собранной DLL.  Замените <YOUR_PROJECT_NAME> на название вашего проекта.
-          asset_name: <YOUR_PROJECT_NAME>.dll # Имя файла DLL, которое будет отображаться в релизе. Замените <YOUR_PROJECT_NAME> на название вашего проекта.
+          asset_name: BloodShadowFramework.dll # Имя файла DLL, которое будет отображаться в релизе. Замените <YOUR_PROJECT_NAME> на название вашего проекта.
           asset_content_type: application/octet-stream # Тип контента
