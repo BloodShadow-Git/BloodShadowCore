@@ -1,5 +1,6 @@
 namespace BloodShadowFramework.SaveSystem
 {
+    using BloodShadowFramework.Logger;
     using Newtonsoft.Json;
     using System;
     using System.IO;
@@ -30,10 +31,10 @@ namespace BloodShadowFramework.SaveSystem
                 using (StreamWriter writer = new(path)) { writer.Write(JsonConvert.SerializeObject(data, _settings)); }
                 callback?.Invoke(true);
             }
-            catch /*(Exception ex)*/
+            catch (Exception ex)
             {
-                //Debug.LogWarning(ex);
-                //Debug.LogWarning("Save wrong");
+                Logger.WriteLineWarning(ex);
+                Logger.WriteLineWarning("Save wrong");
                 callback?.Invoke(false);
             }
         }
@@ -48,10 +49,10 @@ namespace BloodShadowFramework.SaveSystem
                 using (StreamWriter writer = new(path)) { await writer.WriteAsync(JsonConvert.SerializeObject(data, _settings)); }
                 callback?.Invoke(true);
             }
-            catch /*(Exception ex)*/
+            catch (Exception ex)
             {
-                //Debug.LogWarning(ex);
-                //Debug.LogWarning("Save wrong");
+                Logger.WriteLineWarning(ex);
+                Logger.WriteLineWarning("Save wrong");
                 callback?.Invoke(false);
             }
         }
@@ -59,10 +60,10 @@ namespace BloodShadowFramework.SaveSystem
         public override void SaveToString(object data, Action<bool, string> callback = null)
         {
             try { callback?.Invoke(true, JsonConvert.SerializeObject(data, _settings)); }
-            catch /*(Exception ex)*/
+            catch (Exception ex)
             {
-                //Debug.LogWarning(ex);
-                //Debug.LogWarning("Save wrong");
+                Logger.WriteLineWarning(ex);
+                Logger.WriteLineWarning("Save wrong");
                 callback?.Invoke(false, "");
             }
         }
@@ -77,10 +78,10 @@ namespace BloodShadowFramework.SaveSystem
                 using StreamReader fileStream = new(path);
                 callback?.Invoke(JsonConvert.DeserializeObject<T>(fileStream.ReadToEnd(), _settings));
             }
-            catch /*(Exception ex)*/
+            catch (Exception ex)
             {
-                //Debug.LogWarning(ex);
-                //Debug.LogWarning("Load wrong");
+                Logger.WriteLineWarning(ex);
+                Logger.WriteLineWarning("Load wrong");
                 callback?.Invoke(default);
             }
         }
@@ -96,10 +97,10 @@ namespace BloodShadowFramework.SaveSystem
                 string data = await fileStream.ReadToEndAsync();
                 callback?.Invoke(JsonConvert.DeserializeObject<T>(data, _settings));
             }
-            catch /*(Exception ex)*/
+            catch (Exception ex)
             {
-                //Debug.LogWarning(ex);
-                //Debug.LogWarning("Load wrong");
+                Logger.WriteLineWarning(ex);
+                Logger.WriteLineWarning("Load wrong");
                 callback?.Invoke(default);
             }
         }
@@ -107,10 +108,10 @@ namespace BloodShadowFramework.SaveSystem
         public override void LoadFromString<T>(string objectString, Action<T> callback)
         {
             try { callback?.Invoke(JsonConvert.DeserializeObject<T>(objectString)); }
-            catch /*(Exception ex)*/
+            catch (Exception ex)
             {
-                //Debug.LogWarning(ex);
-                //Debug.LogWarning("Load wrong");
+                Logger.WriteLineWarning(ex);
+                Logger.WriteLineWarning("Load wrong");
                 callback?.Invoke(default);
             }
         }
