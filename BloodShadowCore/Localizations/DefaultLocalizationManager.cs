@@ -1,4 +1,4 @@
-namespace BloodShadowFramework.Localizations
+namespace BloodShadowCore.Localizations
 {
     public class DefaultLocalizationManager : LocalizationManager
     {

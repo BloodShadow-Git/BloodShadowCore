@@ -1,4 +1,4 @@
-﻿namespace BloodShadowFramework.Extensions
+﻿namespace BloodShadowCore.Extensions
 {
     public static class Extensions
     {

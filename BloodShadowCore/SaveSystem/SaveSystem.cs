@@ -1,4 +1,4 @@
-namespace BloodShadowFramework.SaveSystem
+namespace BloodShadowCore.SaveSystem
 {
     using System;
 

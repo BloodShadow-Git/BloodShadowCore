@@ -1,4 +1,4 @@
-namespace BloodShadowFramework.Operations
+namespace BloodShadowCore.Operations
 {
     using R3;
     using System.Linq;

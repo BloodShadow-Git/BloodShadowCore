@@ -1,6 +1,6 @@
-namespace BloodShadowFramework.Utils
+namespace BloodShadowCore.Utils
 {
-    using BloodShadowFramework.Extensions;
+    using BloodShadowCore.Extensions;
 
     public class OrGraph<T>
     {
@@ -182,12 +182,12 @@ namespace BloodShadowFramework.Utils
 
             Elements.Add(pair.Key);
             Elements.Add(pair.Value);
-            Elements = [.. (from search in Elements where search != null select search)];
+            Elements = [.. from search in Elements where search != null select search];
             Elements = [.. Elements.Distinct()];
 
             _elements.Add(pair.Key);
             _elements.Add(pair.Value);
-            _elements = [.. (from search in _elements where search != null select search)];
+            _elements = [.. from search in _elements where search != null select search];
             _elements = [.. _elements.Distinct()];
 
             _pairs.Add(pair);
@@ -269,9 +269,9 @@ namespace BloodShadowFramework.Utils
                                 }
                             }
                         }
-                        List<KeyValuePair<T, T>> checkedPairs = [.. (from search in visited
+                        List<KeyValuePair<T, T>> checkedPairs = [.. from search in visited
                                                                  where checkedElements.Contains(search.Key)
-                                                                 select search)];
+                                                                 select search];
                         visited = [.. visited.Except(checkedPairs)];
                         foreach (KeyValuePair<T, T> keyValuePair in visited)
                         {
@@ -296,9 +296,9 @@ namespace BloodShadowFramework.Utils
                         _elements.Add(unitedElement);
                         _unitDictionary.Add(unitedElement, elements);
                         dependes = [.. dependes.Distinct().Except(elements)];
-                        List<KeyValuePair<T, T>> pairsToRemove = [.. (from search in _pairs
+                        List<KeyValuePair<T, T>> pairsToRemove = [.. from search in _pairs
                                                                   where elements.Contains(search.Key)
-                                                                  select search)];
+                                                                  select search];
                         foreach (KeyValuePair<T, T> pairToRemove in pairsToRemove)
                         {
                             _pairs.Remove(pairToRemove);
@@ -325,9 +325,9 @@ namespace BloodShadowFramework.Utils
             while (elementsToAdd.Count > 0)
             {
                 T element = elementsToAdd.Dequeue();
-                List<KeyValuePair<T, T>> elementPairs = [.. (from search in _pairs
+                List<KeyValuePair<T, T>> elementPairs = [.. from search in _pairs
                                                          where search.Key.Equals(element)
-                                                         select search)];
+                                                         select search];
                 if (elementPairs.Count != 0)
                 {
                     if (elementPairs.Count == 1)

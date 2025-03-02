@@ -1,7 +1,7 @@
 using R3;
 using System.Runtime.CompilerServices;
 
-namespace BloodShadowFramework.Operations
+namespace BloodShadowCore.Operations
 {
     public class Operation : IDisposable, ICloneable
     {
@@ -50,11 +50,7 @@ namespace BloodShadowFramework.Operations
             });
             Task.Run(() =>
             {
-                while (!CancellationTokenSource.IsCancellationRequested && !_task.IsCompleted)
-                {
-                    IsDone = _task.IsCompleted;
-                    Task.Yield();
-                }
+                while (!CancellationTokenSource.IsCancellationRequested && !_task.IsCompleted) { IsDone = _task.IsCompleted; }
                 disposable?.Dispose();
                 Progress = 1f;
                 Completed?.Invoke();
