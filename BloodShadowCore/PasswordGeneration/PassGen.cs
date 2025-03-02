@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace BloodShadowFramework.PasswordGeneration
+namespace BloodShadowCore.PasswordGeneration
 {
     public static class PassGen
     {

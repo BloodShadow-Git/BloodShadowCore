@@ -1,4 +1,4 @@
-namespace BloodShadowFramework.StateMachine
+namespace BloodShadowCore.StateMachine
 {
     public interface IState
     {

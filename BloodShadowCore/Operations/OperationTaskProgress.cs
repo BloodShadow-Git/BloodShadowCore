@@ -1,4 +1,4 @@
-﻿namespace BloodShadowFramework.Operations
+﻿namespace BloodShadowCore.Operations
 {
     public enum OperationTaskProgress : byte
     {

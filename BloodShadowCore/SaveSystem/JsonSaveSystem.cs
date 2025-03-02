@@ -1,6 +1,6 @@
-namespace BloodShadowFramework.SaveSystem
+namespace BloodShadowCore.SaveSystem
 {
-    using BloodShadowFramework.Logger;
+    using BloodShadowCore.Logger;
     using Newtonsoft.Json;
     using System;
     using System.IO;
@@ -8,6 +8,7 @@ namespace BloodShadowFramework.SaveSystem
     public class JsonSaveSystem : SaveSystem
     {
         private readonly JsonSerializerSettings _settings;
+        private readonly Logger _logger;
 
         public JsonSaveSystem()
         {
@@ -17,9 +18,16 @@ namespace BloodShadowFramework.SaveSystem
                 PreserveReferencesHandling = PreserveReferencesHandling.Objects,
                 Formatting = Formatting.Indented
             };
+            _logger = new ConsoleLogger();
         }
 
-        public JsonSaveSystem(JsonSerializerSettings settings) { _settings = settings; }
+        public JsonSaveSystem(JsonSerializerSettings settings) : this() { _settings = settings; }
+        public JsonSaveSystem(Logger logger) : this() { _logger = logger; }
+        public JsonSaveSystem(JsonSerializerSettings settings, Logger logger)
+        {
+            _settings = settings;
+            _logger = logger;
+        }
 
         public override void Save(string key, object data, Action<bool> callback = null, bool useBuildPath = true, bool useCheckPath = true)
         {
@@ -33,8 +41,8 @@ namespace BloodShadowFramework.SaveSystem
             }
             catch (Exception ex)
             {
-                Logger.WriteLineWarning(ex);
-                Logger.WriteLineWarning("Save wrong");
+                _logger.WriteLineWarning(ex);
+                _logger.WriteLineWarning("Save wrong");
                 callback?.Invoke(false);
             }
         }
@@ -51,8 +59,8 @@ namespace BloodShadowFramework.SaveSystem
             }
             catch (Exception ex)
             {
-                Logger.WriteLineWarning(ex);
-                Logger.WriteLineWarning("Save wrong");
+                _logger.WriteLineWarning(ex);
+                _logger.WriteLineWarning("Save wrong");
                 callback?.Invoke(false);
             }
         }
@@ -62,8 +70,8 @@ namespace BloodShadowFramework.SaveSystem
             try { callback?.Invoke(true, JsonConvert.SerializeObject(data, _settings)); }
             catch (Exception ex)
             {
-                Logger.WriteLineWarning(ex);
-                Logger.WriteLineWarning("Save wrong");
+                _logger.WriteLineWarning(ex);
+                _logger.WriteLineWarning("Save wrong");
                 callback?.Invoke(false, "");
             }
         }
@@ -80,8 +88,8 @@ namespace BloodShadowFramework.SaveSystem
             }
             catch (Exception ex)
             {
-                Logger.WriteLineWarning(ex);
-                Logger.WriteLineWarning("Load wrong");
+                _logger.WriteLineWarning(ex);
+                _logger.WriteLineWarning("Load wrong");
                 callback?.Invoke(default);
             }
         }
@@ -99,8 +107,8 @@ namespace BloodShadowFramework.SaveSystem
             }
             catch (Exception ex)
             {
-                Logger.WriteLineWarning(ex);
-                Logger.WriteLineWarning("Load wrong");
+                _logger.WriteLineWarning(ex);
+                _logger.WriteLineWarning("Load wrong");
                 callback?.Invoke(default);
             }
         }
@@ -110,8 +118,8 @@ namespace BloodShadowFramework.SaveSystem
             try { callback?.Invoke(JsonConvert.DeserializeObject<T>(objectString)); }
             catch (Exception ex)
             {
-                Logger.WriteLineWarning(ex);
-                Logger.WriteLineWarning("Load wrong");
+                _logger.WriteLineWarning(ex);
+                _logger.WriteLineWarning("Load wrong");
                 callback?.Invoke(default);
             }
         }

@@ -1,7 +1,7 @@
 using ObservableCollections;
 using R3;
 
-namespace BloodShadowFramework.Localizations
+namespace BloodShadowCore.Localizations
 {
     public abstract class LocalizationManager
     {

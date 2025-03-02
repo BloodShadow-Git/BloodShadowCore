@@ -1,4 +1,4 @@
-namespace BloodShadowFramework.ModSystem
+namespace BloodShadowCore.ModSystem
 {
     public abstract class ModBase
     {

@@ -1,4 +1,4 @@
-namespace BloodShadowFramework.Localizations
+namespace BloodShadowCore.Localizations
 {
     [Serializable]
     public class LocalizationData
