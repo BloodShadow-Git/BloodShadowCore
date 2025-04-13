@@ -5,11 +5,15 @@ namespace BloodShadowCore.Utils
     public class OrGraph<T>
     {
         public readonly List<Tree<T>> Trees;
+        private Func<T, T, T> _uniteFunction;
 
-        public OrGraph(IEnumerable<(T item, T parent)> pairs)
+        public OrGraph(IEnumerable<(T item, T parent)> pairs) : this(pairs, null) { }
+
+        public OrGraph(IEnumerable<(T item, T parent)> pairs, Func<T, T, T> uniteFunc)
         {
+            _uniteFunction = uniteFunc;
             Trees = [];
-            foreach ((T item, T parent) pair in pairs) { Add(pair); }
+            foreach ((T, T) pair in pairs) { Add(pair); }
         }
 
         public void Add((T item, T parent) pair)
@@ -49,7 +53,7 @@ namespace BloodShadowCore.Utils
             toAdd.Clear();
             if (!needNewTree) { return; }
 
-            Tree<T> _tree = new();
+            Tree<T> _tree = new(_uniteFunction);
             _tree.Add(pair);
             Trees.Add(_tree);
         }
@@ -135,9 +139,14 @@ namespace BloodShadowCore.Utils
         private List<KeyValuePair<T, T>> _pairs;
         private List<T> _elements;
         private readonly Dictionary<T, List<T>> _unitDictionary;
+        private Func<T, T, T> _uniteFunction;
 
-        public Tree()
+        public Tree() : this(null) { }
+
+        public Tree(Func<T, T, T> unitFunc)
         {
+            _uniteFunction = unitFunc;
+
             Elements = [];
             _pairs = [];
             Layers = [];
@@ -149,6 +158,9 @@ namespace BloodShadowCore.Utils
 
         public Tree(Tree<T> one, Tree<T> two)
         {
+            if (one._uniteFunction != two._uniteFunction) { throw new Exception("Invalid unite function in first and second trees"); }
+
+            _uniteFunction = one._uniteFunction;
             Elements = [.. one.Elements, .. two.Elements];
             _elements = [.. one._elements, .. two._elements];
             _pairs = [.. one._pairs, .. two._pairs];
@@ -242,7 +254,7 @@ namespace BloodShadowCore.Utils
                     if (current.Equals(pair))
                     {
                         List<T> elements = [];
-                        List<T> dependes = [];
+                        List<T> depends = [];
                     newCycle:;
                         checkedElements = [.. checkedElements.Distinct()];
                         IEnumerable<IGrouping<T, KeyValuePair<T, T>>> toFix = from search in _pairs
@@ -251,11 +263,11 @@ namespace BloodShadowCore.Utils
                         List<KeyValuePair<T, T>> toRemove = [];
                         foreach (IGrouping<T, KeyValuePair<T, T>> fix in toFix)
                         {
-                            IEnumerable<KeyValuePair<T, T>> pairsToCheeck = from search in _pairs
-                                                                            where search.Key.Equals(fix.Key)
-                                                                            select search;
+                            IEnumerable<KeyValuePair<T, T>> pairsToCheck = from search in _pairs
+                                                                           where search.Key.Equals(fix.Key)
+                                                                           select search;
                             bool needRemove = false;
-                            foreach (KeyValuePair<T, T> pairToCheck in pairsToCheeck)
+                            foreach (KeyValuePair<T, T> pairToCheck in pairsToCheck)
                             {
                                 if (checkedElements.Contains(pairToCheck.Value)) { needRemove = true; }
                                 else { needRemove = false; break; }
@@ -275,10 +287,10 @@ namespace BloodShadowCore.Utils
                         visited = [.. visited.Except(checkedPairs)];
                         foreach (KeyValuePair<T, T> keyValuePair in visited)
                         {
-                            if (dependes.Contains(keyValuePair.Value)) { continue; }
-                            if (toRemove.Contains(keyValuePair)) { dependes.Add(keyValuePair.Key); continue; }
+                            if (depends.Contains(keyValuePair.Value)) { continue; }
+                            if (toRemove.Contains(keyValuePair)) { depends.Add(keyValuePair.Key); continue; }
                             elements.Add(keyValuePair.Key);
-                            dependes.Add(keyValuePair.Value);
+                            depends.Add(keyValuePair.Value);
                         }
                         elements = [.. elements.Distinct()];
                         T unitedElement = default;
@@ -287,25 +299,26 @@ namespace BloodShadowCore.Utils
                             if (i == 0) { unitedElement = elements[i]; }
                             else
                             {
-                                if (elements[i] is IUnitable<T> unit) { unitedElement = unit.Unit(unitedElement); }
-                                else { throw new Exception("Cycle parents detected and orgraph type is not IUnitable"); }
+                                if (elements[i] is IUnitable<T> unit) { unitedElement = unit.Unite(unitedElement); }
+                                else if (_uniteFunction != null) { unitedElement = _uniteFunction(elements[i], unitedElement); }
+                                else { throw new Exception($"Cycle parents detected and or graph type is not {nameof(IUnitable<T>)} or graph don`t have unite function"); }
                             }
                             _elements.Remove(elements[i]);
                         }
                         if (unitedElement == null) { throw new Exception("Empty united element"); }
                         _elements.Add(unitedElement);
                         _unitDictionary.Add(unitedElement, elements);
-                        dependes = [.. dependes.Distinct().Except(elements)];
+                        depends = [.. depends.Distinct().Except(elements)];
                         List<KeyValuePair<T, T>> pairsToRemove = [.. from search in _pairs
                                                                   where elements.Contains(search.Key)
                                                                   select search];
                         foreach (KeyValuePair<T, T> pairToRemove in pairsToRemove)
                         {
                             _pairs.Remove(pairToRemove);
-                            dependes.Add(pairToRemove.Value);
+                            depends.Add(pairToRemove.Value);
                         }
-                        dependes = [.. dependes.Distinct().Except(elements)];
-                        foreach (var dep in dependes) { _pairs.Add(new KeyValuePair<T, T>(unitedElement, dep)); }
+                        depends = [.. depends.Distinct().Except(elements)];
+                        foreach (var dep in depends) { _pairs.Add(new KeyValuePair<T, T>(unitedElement, dep)); }
                         goto newPair;
                     }
                     IEnumerable<KeyValuePair<T, T>> _pairsQueue = from search in _pairs
@@ -380,11 +393,11 @@ namespace BloodShadowCore.Utils
             while (queue.Count > 0)
             {
                 T element = queue.Dequeue();
-                IEnumerable<T> childs = from search in _pairs
-                                        where element.Equals(search.Value)
-                                        select search.Key;
-                childs = childs.Distinct();
-                if (!childs.Any()) { EndElements.Add(element); }
+                IEnumerable<T> child = from search in _pairs
+                                       where element.Equals(search.Value)
+                                       select search.Key;
+                child = child.Distinct();
+                if (!child.Any()) { EndElements.Add(element); }
             }
         }
 
@@ -440,5 +453,5 @@ namespace BloodShadowCore.Utils
         }
     }
 
-    public interface IUnitable<T> { T Unit(T other); }
+    public interface IUnitable<T> { T Unite(T other); }
 }
