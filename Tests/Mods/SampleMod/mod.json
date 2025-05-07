@@ -1,0 +1,23 @@
+{
+  "$id": "1",
+  "Header": {
+    "$id": "2",
+    "Name": null,
+    "Version": "0.0.0.1",
+    "URL": "SampleMod"
+  },
+  "Icon": null,
+  "RunFileName": "SampleMod",
+  "Dependes": [
+    {
+      "$id": "3",
+      "Header": {
+        "$id": "4",
+        "Name": "Some_Mod",
+        "Version": "0.0.0.1",
+        "URL": "SomeURL"
+      },
+      "ModVersionDependesType": 1
+    }
+  ]
+}

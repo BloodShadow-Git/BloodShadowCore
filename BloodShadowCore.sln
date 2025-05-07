@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BloodShadow", "BloodShadowC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{FBF6DCDE-01F0-448F-B484-3E8340901672}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleMod", "SampleMod\SampleMod.csproj", "{EE894EC8-0038-4D92-891E-8585C36A3310}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SomeMod", "SomeMod\SomeMod.csproj", "{146951BD-5496-4AEA-BB68-FE659AF0FA24}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{FBF6DCDE-01F0-448F-B484-3E8340901672}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBF6DCDE-01F0-448F-B484-3E8340901672}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBF6DCDE-01F0-448F-B484-3E8340901672}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE894EC8-0038-4D92-891E-8585C36A3310}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE894EC8-0038-4D92-891E-8585C36A3310}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE894EC8-0038-4D92-891E-8585C36A3310}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE894EC8-0038-4D92-891E-8585C36A3310}.Release|Any CPU.Build.0 = Release|Any CPU
+		{146951BD-5496-4AEA-BB68-FE659AF0FA24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{146951BD-5496-4AEA-BB68-FE659AF0FA24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{146951BD-5496-4AEA-BB68-FE659AF0FA24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{146951BD-5496-4AEA-BB68-FE659AF0FA24}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

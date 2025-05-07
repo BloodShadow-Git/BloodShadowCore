@@ -9,7 +9,12 @@ namespace BloodShadow.Core.Operations
         public virtual bool AllowSceneActivation { get; set; }
         public virtual bool IsDone { get; protected set; }
         public virtual int Priority { get; set; }
-        public virtual event Action Completed;
+        public event Action OnCompleted
+        {
+            add => OnCompletedAction += value;
+            remove => OnCompletedAction -= value;
+        }
+        protected Action OnCompletedAction;
 
         public CancellationTokenSource CancellationTokenSource { get; protected set; } = new();
         private readonly Task _task;
@@ -53,15 +58,19 @@ namespace BloodShadow.Core.Operations
                 while (!CancellationTokenSource.IsCancellationRequested && !_task.IsCompleted) { IsDone = _task.IsCompleted; }
                 disposable?.Dispose();
                 Progress = 1f;
-                Completed?.Invoke();
+                OnCompletedAction?.Invoke();
                 IsDone = true;
             });
         }
-        public virtual void Dispose() { _task?.Dispose(); CancellationTokenSource.Cancel(); }
+        public virtual void Dispose()
+        {
+            _task?.Dispose();
+            CancellationTokenSource.Cancel();
+        }
         public virtual OperationAwaiter GetAwaiter() => _awaiter;
         public virtual object Clone() => new Operation(_task, _subject);
         public virtual void Wait() { while (!IsDone) { } }
-        public virtual void AddCompleted(Action action) { Completed += action; }
+        public virtual void AddCompleted(Action action) { OnCompletedAction += action; }
 
 
         public class OperationAwaiter : INotifyCompletion

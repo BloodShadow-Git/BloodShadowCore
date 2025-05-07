@@ -1,0 +1,12 @@
+{
+  "$id": "1",
+  "Header": {
+    "$id": "2",
+    "Name": null,
+    "Version": "0.0.0.1",
+    "URL": "SomeMod"
+  },
+  "Icon": null,
+  "RunFileName": "SomeMod",
+  "Dependes": null
+}

@@ -11,4 +11,13 @@
     <ProjectReference Include="..\BloodShadowCore\BloodShadow.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Mods\SampleMod\mod.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Mods\SomeMod\mod.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -8,7 +8,7 @@ namespace BloodShadow.Core.SaveSystem
     public class JsonSaveSystem : SaveSystem
     {
         private readonly JsonSerializerSettings _settings;
-        private readonly Logger _logger;
+        private readonly Logger _logger = null;
 
         public JsonSaveSystem()
         {
@@ -28,7 +28,7 @@ namespace BloodShadow.Core.SaveSystem
             _logger = logger;
         }
 
-        public override void Save(string key, object data, Action<bool> callback = null, bool useBuildPath = true, bool useCheckPath = true)
+        public override void Save(string key, object data, Action<bool> callback, bool useBuildPath, bool useCheckPath)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace BloodShadow.Core.SaveSystem
             }
         }
 
-        public override async void SaveAsync(string key, object data, Action<bool> callback = null, bool useBuildPath = true, bool useCheckPath = true)
+        public override async Task SaveAsync(string key, object data, Action<bool> callback, bool useBuildPath, bool useCheckPath)
         {
             try
             {
@@ -80,7 +80,7 @@ namespace BloodShadow.Core.SaveSystem
             }
         }
 
-        public override void SaveToString(object data, Action<bool, string> callback = null)
+        public override void SaveToString(object data, Action<bool, string> callback)
         {
             try { callback?.Invoke(true, JsonConvert.SerializeObject(data, _settings)); }
             catch (Exception ex)
@@ -99,7 +99,7 @@ namespace BloodShadow.Core.SaveSystem
             }
         }
 
-        public override void Load<T>(string key, Action<T> callback, bool useBuildPath = true, bool useCheckPath = true)
+        public override void Load<T>(string key, Action<T> callback, bool useBuildPath, bool useCheckPath)
         {
             try
             {
@@ -125,7 +125,7 @@ namespace BloodShadow.Core.SaveSystem
             }
         }
 
-        public override async void LoadAsync<T>(string key, Action<T> callback, bool useBuildPath = true, bool useCheckPath = true)
+        public override async Task LoadAsync<T>(string key, Action<T> callback, bool useBuildPath, bool useCheckPath)
         {
             try
             {
@@ -173,11 +173,17 @@ namespace BloodShadow.Core.SaveSystem
 
         public override void CheckFile(string path)
         {
-            if (!Directory.Exists(path)) { Directory.CreateDirectory(Path.GetDirectoryName(path) ?? ""); }
-            if (!File.Exists(path)) { File.Create(path).Close(); }
+            path = BuildPath(path);
+            FileInfo fileInfo = new(path);
+            if (!fileInfo.Exists) { fileInfo.Create().Close(); }
         }
 
-        public override void CheckFolder(string path) { if (!Directory.Exists(path)) { Directory.CreateDirectory(Path.GetDirectoryName(path) ?? ""); } }
+        public override void CheckDirectory(string path)
+        {
+            path = BuildPath(path);
+            DirectoryInfo dirInfo = new(path);
+            if (!dirInfo.Exists) { dirInfo.Create(); }
+        }
 
         private static string BuildPath(string key) => Path.Combine("./", key);
     }
