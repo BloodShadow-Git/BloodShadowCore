@@ -96,7 +96,7 @@ namespace BloodShadow.Core.OrGraph
             T[] result = [];
             for (int i = 0; i < Trees.Count; i++)
             {
-                if (Trees[i].Layers.Count < index)
+                if (Trees[i].Layers.Count > index)
                 {
                     if (i == 0) { result = [.. Trees[i].Layers.ElementAt(index)]; }
                     else { result = [.. result.Union(Trees[i].Layers.ElementAt(index))]; }

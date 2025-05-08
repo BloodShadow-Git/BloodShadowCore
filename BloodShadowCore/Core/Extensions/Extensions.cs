@@ -42,5 +42,15 @@ namespace BloodShadow.Core.Extensions
             ModVersionDependesType.Equals => first.Version == second.Version,
             _ => false
         };
+
+        public static bool Compare(this ModDependes first, ModHeader second) => first.ModVersionDependesType switch
+        {
+            ModVersionDependesType.More => first.Header.Version > second.Version,
+            ModVersionDependesType.MoreOrEquals => first.Header.Version >= second.Version,
+            ModVersionDependesType.Less => first.Header.Version < second.Version,
+            ModVersionDependesType.LessOrEquals => first.Header.Version <= second.Version,
+            ModVersionDependesType.Equals => first.Header.Version == second.Version,
+            _ => false
+        };
     }
 }
