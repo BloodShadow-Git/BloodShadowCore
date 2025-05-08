@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35818.85
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BloodShadow", "BloodShadowCore\BloodShadow.csproj", "{30E01553-131B-4B00-BFFC-5983ADB3A539}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BloodShadow", "BloodShadow\BloodShadow.csproj", "{7CBBF834-FAD9-4D18-B7E3-2C0BD85A0076}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{30E01553-131B-4B00-BFFC-5983ADB3A539}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{30E01553-131B-4B00-BFFC-5983ADB3A539}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{30E01553-131B-4B00-BFFC-5983ADB3A539}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{30E01553-131B-4B00-BFFC-5983ADB3A539}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CBBF834-FAD9-4D18-B7E3-2C0BD85A0076}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CBBF834-FAD9-4D18-B7E3-2C0BD85A0076}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CBBF834-FAD9-4D18-B7E3-2C0BD85A0076}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CBBF834-FAD9-4D18-B7E3-2C0BD85A0076}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
