@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "8gDgbBxENnE=",
+  "success": true,
+  "projectFilePath": "/home/bloodshadow/Desktop/BloodShadowCore/BloodShadow.Core/BloodShadow.Core.csproj",
+  "expectedPackageFiles": [
+    "/home/bloodshadow/.nuget/packages/microsoft.aspnetcore.app.ref/10.0.11/microsoft.aspnetcore.app.ref.10.0.11.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,13 @@
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/bin/Debug/Program
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/bin/Debug/Program.deps.json
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/bin/Debug/Program.runtimeconfig.json
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/bin/Debug/Program.dll
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/obj/Program/debug/Program.GeneratedMSBuildEditorConfig.editorconfig
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/obj/Program/debug/Program.AssemblyInfoInputs.cache
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/obj/Program/debug/Program.AssemblyInfo.cs
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/obj/Program/debug/Program.csproj.CoreCompileInputs.cache
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/obj/Program/debug/Program.dll
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/obj/Program/debug/refint/Program.dll
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/obj/Program/debug/Program.pdb
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/obj/Program/debug/Program.genruntimeconfig.cache
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/obj/Program/debug/ref/Program.dll

@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="BloodShadow.Core.ConsoleInterface/BloodShadow.Core.ConsoleInterface.csproj" />
+  <Project Path="BloodShadow.Core.Logger/BloodShadow.Core.Logger.csproj" />
+  <Project Path="BloodShadow.Core.SaveSystem/BloodShadow.Core.SaveSystem.csproj" />
+  <Project Path="BloodShadow.Core/BloodShadow.Core.csproj" />
+</Solution>

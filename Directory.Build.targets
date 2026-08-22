@@ -1,0 +1,18 @@
+<Project>
+  <Target Name="CopySymbolsToSeparateFolder" AfterTargets="Build">
+    <MakeDir Directories="$(SymbolsOutputPath)" Condition="'$(SymbolsOutputPath)' != ''" />
+    <Copy SourceFiles="$(IntermediateOutputPath)$(TargetName).pdb" 
+          DestinationFolder="$(SymbolsOutputPath)" 
+          Condition="Exists('$(IntermediateOutputPath)$(TargetName).pdb') And '$(SymbolsOutputPath)' != ''"
+          SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="CopyCleanDllsToSeparateFolder" AfterTargets="Build">
+    <MakeDir Directories="$(CleanDllsOutputPath)" Condition="'$(CleanDllsOutputPath)' != ''" />
+    
+    <Copy SourceFiles="$(TargetPath)" 
+          DestinationFolder="$(CleanDllsOutputPath)" 
+          Condition="Exists('$(TargetPath)') And '$(CleanDllsOutputPath)' != ''"
+          SkipUnchangedFiles="true" />
+  </Target>
+</Project>

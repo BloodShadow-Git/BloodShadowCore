@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "pEaDzap3+uo=",
+  "success": true,
+  "projectFilePath": "/home/bloodshadow/Desktop/BloodShadowCore/TestConsole/Program.csproj",
+  "expectedPackageFiles": [
+    "/home/bloodshadow/.nuget/packages/microsoft.dotnet.ilcompiler/10.0.10/microsoft.dotnet.ilcompiler.10.0.10.nupkg.sha512",
+    "/home/bloodshadow/.nuget/packages/microsoft.net.illink.tasks/10.0.10/microsoft.net.illink.tasks.10.0.10.nupkg.sha512",
+    "/home/bloodshadow/.nuget/packages/microsoft.aspnetcore.app.ref/10.0.10/microsoft.aspnetcore.app.ref.10.0.10.nupkg.sha512",
+    "/home/bloodshadow/.nuget/packages/runtime.linux-x64.microsoft.dotnet.ilcompiler/10.0.10/runtime.linux-x64.microsoft.dotnet.ilcompiler.10.0.10.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,22 @@
+<Project>
+  <PropertyGroup>
+    <RootArtifactsDir>$(MSBuildThisFileDirectory)artifacts/</RootArtifactsDir>
+    
+    <BaseOutputPath>$(RootArtifactsDir)bin/</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(RootArtifactsDir)obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
+    
+    <OutputPath>$(BaseOutputPath)$(Configuration)/</OutputPath>
+    <SymbolsOutputPath>$(RootArtifactsDir)symbols/$(Configuration)/</SymbolsOutputPath>
+    
+    <CleanDllsOutputPath>$(RootArtifactsDir)clean_dlls/$(Configuration)/</CleanDllsOutputPath>
+
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <UseCommonOutputDirectory>true</UseCommonOutputDirectory>
+
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
+    <AllowedReferenceRelatedFileExtensions>.xml</AllowedReferenceRelatedFileExtensions>
+  </PropertyGroup>
+</Project>

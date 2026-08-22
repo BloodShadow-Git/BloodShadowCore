@@ -1,0 +1,12 @@
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/obj/BloodShadow.Core.SaveSystem/Debug/BloodShadow.Core.SaveSystem.csproj.AssemblyReference.cache
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/obj/BloodShadow.Core.SaveSystem/Debug/BloodShadow.Core.SaveSystem.GeneratedMSBuildEditorConfig.editorconfig
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/obj/BloodShadow.Core.SaveSystem/Debug/BloodShadow.Core.SaveSystem.AssemblyInfoInputs.cache
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/obj/BloodShadow.Core.SaveSystem/Debug/BloodShadow.Core.SaveSystem.AssemblyInfo.cs
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/obj/BloodShadow.Core.SaveSystem/Debug/BloodShadow.Core.SaveSystem.csproj.CoreCompileInputs.cache
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/bin/Debug/BloodShadow.Core.SaveSystem.deps.json
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/bin/Debug/BloodShadow.Core.SaveSystem.dll
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/obj/BloodShadow.Core.SaveSystem/Debug/BloodSha.4F8CA5E8.Up2Date
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/obj/BloodShadow.Core.SaveSystem/Debug/BloodShadow.Core.SaveSystem.dll
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/obj/BloodShadow.Core.SaveSystem/Debug/refint/BloodShadow.Core.SaveSystem.dll
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/obj/BloodShadow.Core.SaveSystem/Debug/BloodShadow.Core.SaveSystem.pdb
+/home/bloodshadow/Desktop/BloodShadowCore/artifacts/obj/BloodShadow.Core.SaveSystem/Debug/ref/BloodShadow.Core.SaveSystem.dll

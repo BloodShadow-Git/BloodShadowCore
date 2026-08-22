@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "BloodShadow.Core.ConsoleInterface/1.0.0": {
+        "dependencies": {
+          "BloodShadow.Core": "1.0.0"
+        },
+        "runtime": {
+          "BloodShadow.Core.ConsoleInterface.dll": {}
+        }
+      },
+      "BloodShadow.Core/1.0.0": {
+        "runtime": {
+          "BloodShadow.Core.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "BloodShadow.Core.ConsoleInterface/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "BloodShadow.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
