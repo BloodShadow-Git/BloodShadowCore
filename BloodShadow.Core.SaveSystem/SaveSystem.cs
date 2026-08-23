@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using BloodShadow.Core.Extensions;
 using BloodShadow.Core.Logger;
 
@@ -25,7 +26,7 @@ namespace BloodShadow.Core.SaveSystem
                 byte[] dataToWrite = SerializeModule.Serialize(data);
                 if (!dataToWrite.Valid())
                 {
-                    Label.WriteLineWarning($"Serialized data not valid. Location: {location}");
+                    Label.WriteLine(MessageChanel.WARN, $"Serialized data not valid. Location: {location}", null, null);
                     return false;
                 }
                 if (EncryptModule != null)
@@ -33,21 +34,21 @@ namespace BloodShadow.Core.SaveSystem
                     dataToWrite = EncryptModule.Encrypt(dataToWrite);
                     if (!dataToWrite.Valid())
                     {
-                        Label.WriteLineWarning($"Data after encryption is not valid. Location: {location}");
+                        Label.WriteLine(MessageChanel.WARN, $"Data after encryption is not valid. Location: {location}", null, null);
                         return false;
                     }
                 }
                 bool resourceAvailable = VerifyResource(location, createIfNotExists);
                 if (!resourceAvailable)
                 {
-                    Label.WriteLineWarning($"No resource at {location}");
+                    Label.WriteLine(MessageChanel.WARN, $"No resource at {location}", null, null);
                     return false;
                 }
                 bool result = IOModule.Write(location, dataToWrite);
-                if (!result) { Label.WriteLineWarning($"Failed to write into {location}"); }
+                if (!result) { Label.WriteLine(MessageChanel.WARN, $"Failed to write into {location}", null, null); }
                 return result;
             }
-            catch (Exception exception) { Label.WriteLineException($"Exception while save to {location}.", exception); }
+            catch (Exception exception) { Label.WriteLine(MessageChanel.ERROR, $"Exception while save to {location}.", new StackTrace(1), exception); }
             return false;
         }
         public virtual async Task<bool> SaveAsync(string location, object data, bool createIfNotExists = true)
@@ -57,7 +58,7 @@ namespace BloodShadow.Core.SaveSystem
                 byte[] dataToWrite = await SerializeModule.SerializeAsync(data);
                 if (!dataToWrite.Valid())
                 {
-                    Label.WriteLineWarning($"Serialized data not valid. Location: {location}");
+                    Label.WriteLine(MessageChanel.WARN, $"Serialized data not valid. Location: {location}", null, null);
                     return false;
                 }
                 if (EncryptModule != null)
@@ -65,21 +66,21 @@ namespace BloodShadow.Core.SaveSystem
                     dataToWrite = await EncryptModule.EncryptAsync(dataToWrite);
                     if (!dataToWrite.Valid())
                     {
-                        Label.WriteLineWarning($"Data after encryption is not valid. Location: {location}");
+                        Label.WriteLine(MessageChanel.WARN, $"Data after encryption is not valid. Location: {location}", null, null);
                         return false;
                     }
                 }
                 bool resourceAvailable = await VerifyResourceAsync(location, createIfNotExists);
                 if (!resourceAvailable)
                 {
-                    Label.WriteLineWarning($"No resource at {location}");
+                    Label.WriteLine(MessageChanel.WARN, $"No resource at {location}", null, null);
                     return false;
                 }
                 bool result = await IOModule.WriteAsync(location, dataToWrite);
-                if (!result) { Label.WriteLineWarning($"Failed to write into {location}"); }
+                if (!result) { Label.WriteLine(MessageChanel.WARN, $"Failed to write into {location}", null, null); }
                 return result;
             }
-            catch (Exception exception) { Label.WriteLineException($"Exception while save to {location}.", exception); }
+            catch (Exception exception) { Label.WriteLine(MessageChanel.ERROR, $"Exception while save to {location}.", new StackTrace(1), exception); }
             return false;
         }
 
@@ -90,13 +91,13 @@ namespace BloodShadow.Core.SaveSystem
                 bool resourceAvailable = VerifyResource(location, createIfNotExists);
                 if (!resourceAvailable)
                 {
-                    Label.WriteLineWarning($"No resource at {location}");
+                    Label.WriteLine(MessageChanel.WARN, $"No resource at {location}", null, null);
                     return default;
                 }
                 byte[] data = IOModule.Read(location);
                 if (data.Valid())
                 {
-                    Label.WriteLineWarning($"Data from {location} is not valid");
+                    Label.WriteLine(MessageChanel.WARN, $"Data from {location} is not valid", null, null);
                     return default;
                 }
                 if (EncryptModule != null)
@@ -104,15 +105,15 @@ namespace BloodShadow.Core.SaveSystem
                     data = EncryptModule.Decrypt(data);
                     if (!data.Valid())
                     {
-                        Label.WriteLineWarning($"Data after decrypt is not valid. Location: {location}");
+                        Label.WriteLine(MessageChanel.WARN, $"Data after decrypt is not valid. Location: {location}", null, null);
                         return default;
                     }
                 }
                 T? result = SerializeModule.Deserialize<T>(data);
-                if (result == null) { Label.WriteLineWarning($"Failed to deserialize data from {location}"); }
+                if (result == null) { Label.WriteLine(MessageChanel.WARN, $"Failed to deserialize data from {location}", null, null); }
                 return result;
             }
-            catch (Exception exception) { Label.WriteLineException($"Exception while load from {location}.", exception); }
+            catch (Exception exception) { Label.WriteLine(MessageChanel.ERROR, $"Exception while load from {location}.", new StackTrace(1), exception); }
             return default;
         }
         public virtual async Task<T?> LoadAsync<T>(string location, bool createIfNotExists = true)
@@ -122,13 +123,13 @@ namespace BloodShadow.Core.SaveSystem
                 bool resourceAvailable = await VerifyResourceAsync(location, createIfNotExists);
                 if (!resourceAvailable)
                 {
-                    Label.WriteLineWarning($"No resource at {location}");
+                    Label.WriteLine(MessageChanel.WARN, $"No resource at {location}", null, null);
                     return default;
                 }
                 byte[] data = await IOModule.ReadAsync(location);
                 if (data.Valid())
                 {
-                    Label.WriteLineWarning($"Data from {location} is not valid");
+                    Label.WriteLine(MessageChanel.WARN, $"Data from {location} is not valid", null, null);
                     return default;
                 }
                 if (EncryptModule != null)
@@ -136,15 +137,15 @@ namespace BloodShadow.Core.SaveSystem
                     data = await EncryptModule.DecryptAsync(data);
                     if (!data.Valid())
                     {
-                        Label.WriteLineWarning($"Data after decrypt is not valid. Location: {location}");
+                        Label.WriteLine(MessageChanel.WARN, $"Data after decrypt is not valid. Location: {location}", null, null);
                         return default;
                     }
                 }
                 T? result = await SerializeModule.DeserializeAsync<T>(data);
-                if (result == null) { Label.WriteLineWarning($"Failed to deserialize data from {location}"); }
+                if (result == null) { Label.WriteLine(MessageChanel.WARN, $"Failed to deserialize data from {location}", null, null); }
                 return result;
             }
-            catch (Exception exception) { Label.WriteLineException($"Exception while load from {location}.", exception); }
+            catch (Exception exception) { Label.WriteLine(MessageChanel.ERROR, $"Exception while load from {location}.", new StackTrace(1), exception); }
             return default;
         }
 

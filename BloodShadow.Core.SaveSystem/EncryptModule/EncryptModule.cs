@@ -1,4 +1,5 @@
-﻿using BloodShadow.Core.Extensions;
+﻿using System.Diagnostics;
+using BloodShadow.Core.Extensions;
 using BloodShadow.Core.Logger;
 
 namespace BloodShadow.Core.SaveSystem.EncryptModule
@@ -11,11 +12,11 @@ namespace BloodShadow.Core.SaveSystem.EncryptModule
         {
             if (!source.Valid())
             {
-                Logger.WriteLineWarning("Invalid bytes to encrypt");
+                Logger.WriteLine(MessageChanel.WARN, "Invalid bytes to encrypt", null, null);
                 return [];
             }
             try { return EncryptInternal(source); }
-            catch (Exception exception) { Logger.WriteLineException($"Exception while encrypting bytes.", exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while encrypting bytes.", new StackTrace(1), exception); }
             return [];
         }
         protected abstract byte[] EncryptInternal(byte[] source);
@@ -23,11 +24,11 @@ namespace BloodShadow.Core.SaveSystem.EncryptModule
         {
             if (!source.Valid())
             {
-                Logger.WriteLineWarning("Invalid bytes to encrypt");
+                Logger.WriteLine(MessageChanel.WARN, "Invalid bytes to encrypt", null, null);
                 return [];
             }
             try { return await EncryptAsyncInternal(source); }
-            catch (Exception exception) { Logger.WriteLineException($"Exception while encrypting bytes.", exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while encrypting bytes.", new StackTrace(1), exception); }
             return [];
         }
         protected abstract Task<byte[]> EncryptAsyncInternal(byte[] source);
@@ -35,11 +36,11 @@ namespace BloodShadow.Core.SaveSystem.EncryptModule
         {
             if (!source.Valid())
             {
-                Logger.WriteLineWarning("Invalid bytes to decrypt");
+                Logger.WriteLine(MessageChanel.WARN, "Invalid bytes to decrypt", null, null);
                 return [];
             }
             try { return DecryptInternal(source); }
-            catch (Exception exception) { Logger.WriteLineException($"Exception while decrypting bytes.", exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while decrypting bytes.", new StackTrace(1), exception); }
             return [];
         }
         protected abstract byte[] DecryptInternal(byte[] source);
@@ -47,11 +48,11 @@ namespace BloodShadow.Core.SaveSystem.EncryptModule
         {
             if (!source.Valid())
             {
-                Logger.WriteLineWarning("Invalid bytes to decrypt");
+                Logger.WriteLine(MessageChanel.WARN, "Invalid bytes to decrypt", null, null);
                 return [];
             }
             try { return await DecryptAsyncInternal(source); }
-            catch (Exception exception) { Logger.WriteLineException($"Exception while decrypting bytes.", exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while decrypting bytes.", new StackTrace(1), exception); }
             return [];
         }
         protected abstract Task<byte[]> DecryptAsyncInternal(byte[] source);

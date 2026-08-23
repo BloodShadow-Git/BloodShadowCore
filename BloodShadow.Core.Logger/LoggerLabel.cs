@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Reflection.Emit;
 
 namespace BloodShadow.Core.Logger
 {
@@ -34,15 +33,7 @@ namespace BloodShadow.Core.Logger
             if (parent != null) { _parent = parent; }
         }
         public LoggerLabel(string label) : this(label, string.Empty) { }
-        public void WriteLineException(string message, StackTrace stackTrace, Exception exception) { Logger.WriteLineException(this, message, stackTrace, exception); }
-        public void WriteLineException(string message, Exception exception) { WriteLineException(message, new(1), exception); }
-        public void WriteLineWarning(string message, StackTrace stackTrace) { Logger.WriteLineWarning(this, message, stackTrace); }
-        public void WriteLineWarning(string message) { WriteLineWarning(message, new(1)); }
-        public void WriteLineInfo(string message) { Logger.WriteLineInfo(this, message); }
-        public void WriteException(string message, StackTrace stackTrace, Exception exception) { Logger.WriteException(this, message, stackTrace, exception); }
-        public void WriteException(string message, Exception exception) { WriteException(message, new(1), exception); }
-        public void WriteWarning(string message, StackTrace stackTrace) { Logger.WriteWarning(this, message, stackTrace); }
-        public void WriteWarning(string message) { WriteWarning(message, new(1)); }
-        public void WriteInfo(string message) { Logger.WriteInfo(this, message); }
+        public void WriteLine(MessageChanel chanel, string message, StackTrace? stackTrace, Exception? exception) { Logger.WriteLine(chanel, this, message, stackTrace, exception); }
+        public void Write(MessageChanel chanel, string message, StackTrace? stackTrace, Exception? exception) { Logger.Write(chanel, this, message, stackTrace, exception); }
     }
 }

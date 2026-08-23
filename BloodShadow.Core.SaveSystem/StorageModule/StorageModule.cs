@@ -1,4 +1,5 @@
-﻿using BloodShadow.Core.Extensions;
+﻿using System.Diagnostics;
+using BloodShadow.Core.Extensions;
 using BloodShadow.Core.Logger;
 
 namespace BloodShadow.Core.SaveSystem.StorageModule
@@ -11,15 +12,15 @@ namespace BloodShadow.Core.SaveSystem.StorageModule
         {
             if (!location.Valid())
             {
-                Logger.WriteLineWarning($"Empty location. Location: {location}");
+                Logger.WriteLine(MessageChanel.WARN, $"Empty location. Location: {location}", null, null);
                 return false;
             }
-            Logger.WriteLineInfo($"Writing to {location}");
-            if (content.Valid()) { Logger.WriteLineWarning("Empty content"); }
+            Logger.WriteLine(MessageChanel.INFO, $"Writing to {location}", null, null);
+            if (content.Valid()) { Logger.WriteLine(MessageChanel.WARN, "Empty content", null, null); }
             bool res = false;
             try { res = WriteInternal(location, content); }
-            catch (Exception exception) { Logger.WriteLineException($"Exception while writing at {location}.", exception); }
-            finally { if (!res) { Logger.WriteLineWarning($"Failed to write to {location}"); } }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while writing at {location}.", new StackTrace(1), exception); }
+            finally { if (!res) { Logger.WriteLine(MessageChanel.WARN, $"Failed to write to {location}", null, null); } }
             return res;
         }
         protected abstract bool WriteInternal(string location, byte[] content);
@@ -27,15 +28,15 @@ namespace BloodShadow.Core.SaveSystem.StorageModule
         {
             if (!location.Valid())
             {
-                Logger.WriteLineWarning($"Empty location. Location: {location}");
+                Logger.WriteLine(MessageChanel.WARN, $"Empty location. Location: {location}", null, null);
                 return false;
             }
-            Logger.WriteLineInfo($"Writing to {location}");
-            if (content.Valid()) { Logger.WriteLineWarning("Empty content"); }
+            Logger.WriteLine(MessageChanel.INFO, $"Writing to {location}", null, null);
+            if (content.Valid()) { Logger.WriteLine(MessageChanel.WARN, "Empty content", null, null); }
             bool res = false;
             try { res = await WriteAsyncInternal(location, content); }
-            catch (Exception exception) { Logger.WriteLineException($"Exception while writing at {location}.", exception); }
-            finally { if (!res) { Logger.WriteLineWarning($"Failed to write to {location}"); } }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while writing at {location}.", new StackTrace(1), exception); }
+            finally { if (!res) { Logger.WriteLine(MessageChanel.WARN, $"Failed to write to {location}", null, null); } }
             return res;
         }
         protected abstract Task<bool> WriteAsyncInternal(string location, byte[] content);
@@ -43,14 +44,14 @@ namespace BloodShadow.Core.SaveSystem.StorageModule
         {
             if (string.IsNullOrEmpty(location))
             {
-                Logger.WriteLineWarning($"Empty location. Location: {location}");
+                Logger.WriteLine(MessageChanel.WARN, $"Empty location. Location: {location}", null, null);
                 return [];
             }
-            Logger.WriteLineInfo($"Reading from {location}");
+            Logger.WriteLine(MessageChanel.INFO, $"Reading from {location}", null, null);
             byte[] result = [];
             try { result = ReadInternal(location); }
-            catch (Exception exception) { Logger.WriteLineException($"Exception while reading from {location}.", exception); }
-            finally { if (!result.Valid()) { Logger.WriteLineWarning($"Empty file content. If it normal you can ignore this warning"); } }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while reading from {location}.", new StackTrace(1), exception); }
+            finally { if (!result.Valid()) { Logger.WriteLine(MessageChanel.WARN, $"Empty file content. If it normal you can ignore this warning", null, null); } }
             return result;
         }
         protected abstract byte[] ReadInternal(string location);
@@ -58,14 +59,14 @@ namespace BloodShadow.Core.SaveSystem.StorageModule
         {
             if (string.IsNullOrEmpty(location))
             {
-                Logger.WriteLineWarning($"Empty location. Location: {location}");
+                Logger.WriteLine(MessageChanel.WARN, $"Empty location. Location: {location}", null, null);
                 return [];
             }
-            Logger.WriteLineInfo($"Reading from {location}");
+            Logger.WriteLine(MessageChanel.INFO, $"Reading from {location}", null, null);
             byte[] result = [];
             try { result = await ReadAsyncInternal(location); }
-            catch (Exception exception) { Logger.WriteLineException($"Exception while reading at {location}.", exception); }
-            finally { if (!result.Valid()) { Logger.WriteLineWarning($"Empty file content. If it normal you can ignore this warning"); } }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while reading at {location}.", new StackTrace(1), exception); }
+            finally { if (!result.Valid()) { Logger.WriteLine(MessageChanel.WARN, $"Empty file content. If it normal you can ignore this warning", null, null); } }
             return result;
         }
         protected abstract Task<byte[]> ReadAsyncInternal(string location);
@@ -73,14 +74,14 @@ namespace BloodShadow.Core.SaveSystem.StorageModule
         {
             if (!collectionLocation.Valid())
             {
-                Logger.WriteLineWarning($"Empty collection location. Location: {collectionLocation}");
+                Logger.WriteLine(MessageChanel.WARN, $"Empty collection location. Location: {collectionLocation}", null, null);
                 return false;
             }
-            Logger.WriteLineInfo($"Verifying collection at {collectionLocation}");
+            Logger.WriteLine(MessageChanel.INFO, $"Verifying collection at {collectionLocation}", null, null);
             bool res = false;
             try { res = VerifyCollectionInternal(collectionLocation, createIfNotExists); }
-            catch (Exception exception) { Logger.WriteLineException($"Exception while verifying collection at {collectionLocation}.", exception); }
-            finally { if (createIfNotExists && !res) { Logger.WriteLineWarning($"Collection at {collectionLocation} cannot be fixed"); } }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while verifying collection at {collectionLocation}.", new StackTrace(1), exception); }
+            finally { if (createIfNotExists && !res) { Logger.WriteLine(MessageChanel.WARN, $"Collection at {collectionLocation} cannot be fixed", null, null); } }
             return res;
 
         }
@@ -90,14 +91,14 @@ namespace BloodShadow.Core.SaveSystem.StorageModule
         {
             if (!collectionLocation.Valid())
             {
-                Logger.WriteLineWarning($"Empty collection location. Location: {collectionLocation}");
+                Logger.WriteLine(MessageChanel.WARN, $"Empty collection location. Location: {collectionLocation}", null, null);
                 return false;
             }
-            Logger.WriteLineInfo($"Verifying collection at {collectionLocation}");
+            Logger.WriteLine(MessageChanel.INFO, $"Verifying collection at {collectionLocation}", null, null);
             bool res = false;
             try { res = await VerifyCollectionAsyncInternal(collectionLocation, createIfNotExists); }
-            catch (Exception exception) { Logger.WriteLineException($"Exception while verifying collection at {collectionLocation}.", exception); }
-            finally { if (createIfNotExists && !res) { Logger.WriteLineWarning($"Collection at {collectionLocation} cannot be fixed"); } }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while verifying collection at {collectionLocation}.", new StackTrace(1), exception); }
+            finally { if (createIfNotExists && !res) { Logger.WriteLine(MessageChanel.WARN, $"Collection at {collectionLocation} cannot be fixed", null, null); } }
             return res;
 
         }
@@ -107,14 +108,14 @@ namespace BloodShadow.Core.SaveSystem.StorageModule
         {
             if (!resourceLocation.Valid())
             {
-                Logger.WriteLineWarning($"Empty resource location. Location: {resourceLocation}");
+                Logger.WriteLine(MessageChanel.WARN, $"Empty resource location. Location: {resourceLocation}", null, null);
                 return false;
             }
-            Logger.WriteLineInfo($"Verifying resource at {resourceLocation}");
+            Logger.WriteLine(MessageChanel.INFO, $"Verifying resource at {resourceLocation}", null, null);
             bool res = false;
             try { res = VerifyResourceInternal(resourceLocation, createIfNotExists); }
-            catch (Exception exception) { Logger.WriteLineException($"Exception while verifying resource at {resourceLocation}.", exception); }
-            finally { if (createIfNotExists && !res) { Logger.WriteLineWarning($"Resource at {resourceLocation} cannot be fixed"); } }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while verifying resource at {resourceLocation}.", new StackTrace(1), exception); }
+            finally { if (createIfNotExists && !res) { Logger.WriteLine(MessageChanel.WARN, $"Resource at {resourceLocation} cannot be fixed", null, null); } }
             return res;
         }
         public bool VerifyResource(string resourceLocation) => VerifyResource(resourceLocation, false);
@@ -123,83 +124,83 @@ namespace BloodShadow.Core.SaveSystem.StorageModule
         {
             if (!resourceLocation.Valid())
             {
-                Logger.WriteLineWarning($"Empty resource location. Location: {resourceLocation}");
+                Logger.WriteLine(MessageChanel.WARN, $"Empty resource location. Location: {resourceLocation}", null, null);
                 return false;
             }
-            Logger.WriteLineInfo($"Verifying resource at {resourceLocation}");
+            Logger.WriteLine(MessageChanel.INFO, $"Verifying resource at {resourceLocation}", null, null);
             bool res = false;
             try { res = await VerifyResourceAsyncInternal(resourceLocation, createIfNotExists); }
-            catch (Exception exception) { Logger.WriteLineException($"Exception while verifying resource at {resourceLocation}.", exception); }
-            finally { if (createIfNotExists && !res) { Logger.WriteLineWarning($"Resource at {resourceLocation} cannot be fixed"); } }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while verifying resource at {resourceLocation}.", new StackTrace(1), exception); }
+            finally { if (createIfNotExists && !res) { Logger.WriteLine(MessageChanel.WARN, $"Resource at {resourceLocation} cannot be fixed", null, null); } }
             return res;
         }
         public Task<bool> VerifyResourceAsync(string resourceLocation) => VerifyResourceAsync(resourceLocation, false);
         protected abstract Task<bool> VerifyResourceAsyncInternal(string resourceLocation, bool createIfNotExists);
         public bool IsResource(string location)
         {
-            Logger.WriteLineInfo($"Checking resource at {location}");
+            Logger.WriteLine(MessageChanel.INFO, $"Checking resource at {location}", null, null);
             try { return IsResourceInternal(location); }
-            catch (Exception exception) { Logger.WriteLineException($"Exception while checking resource", exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while checking resource", new StackTrace(1), exception); }
             return false;
         }
         protected abstract bool IsResourceInternal(string location);
         public async Task<bool> IsResourceAsync(string location)
         {
-            Logger.WriteLineInfo($"Checking resource at {location}");
+            Logger.WriteLine(MessageChanel.INFO, $"Checking resource at {location}", null, null);
             try { return await IsResourceAsyncInternal(location); }
-            catch (Exception exception) { Logger.WriteLineException($"Exception while checking resource", exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while checking resource", new StackTrace(1), exception); }
             return false;
         }
         protected abstract Task<bool> IsResourceAsyncInternal(string location);
         public bool IsCollection(string location)
         {
-            Logger.WriteLineInfo($"Checking collection at {location}");
+            Logger.WriteLine(MessageChanel.INFO, $"Checking collection at {location}", null, null);
             try { return IsCollectionInternal(location); }
-            catch (Exception exception) { Logger.WriteLineException($"Exception while checking collection", exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while checking collection", new StackTrace(1), exception); }
             return false;
         }
         protected abstract bool IsCollectionInternal(string location);
         public async Task<bool> IsCollectionAsync(string location)
         {
-            Logger.WriteLineInfo($"Checking collection at {location}");
+            Logger.WriteLine(MessageChanel.INFO, $"Checking collection at {location}", null, null);
             try { return await IsCollectionAsyncInternal(location); }
-            catch (Exception exception) { Logger.WriteLineException($"Exception while checking collection", exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while checking collection", new StackTrace(1), exception); }
             return false;
         }
         protected abstract Task<bool> IsCollectionAsyncInternal(string location);
         public IEnumerable<string> EnumerateCollection(string location)
         {
-            Logger.WriteLineInfo($"Enumerating collection at {location}");
+            Logger.WriteLine(MessageChanel.INFO, $"Enumerating collection at {location}", null, null);
             if (!location.Valid())
             {
-                Logger.WriteLineException($"Invalid location. Location: {location}", new ArgumentNullException(nameof(location)));
+                Logger.WriteLine(MessageChanel.ERROR, $"Invalid location. Location: {location}", new StackTrace(1), new ArgumentNullException(nameof(location)));
                 return [];
             }
             if (!IsCollection(location))
             {
-                Logger.WriteLineException($"Location is not collection. Location: {location}", new ArgumentException(nameof(location)));
+                Logger.WriteLine(MessageChanel.ERROR, $"Location is not collection. Location: {location}", new StackTrace(1), new ArgumentException(nameof(location)));
                 return [];
             }
             try { return EnumerateCollectionInternal(location); }
-            catch (Exception exception) { Logger.WriteLineException($"Exception while enumerating {location}.", exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while enumerating {location}.", new StackTrace(1), exception); }
             return [];
         }
         protected abstract IEnumerable<string> EnumerateCollectionInternal(string location);
         public IAsyncEnumerable<string> EnumerateCollectionAsync(string location)
         {
-            Logger.WriteLineInfo($"Enumerating collection at {location}");
+            Logger.WriteLine(MessageChanel.INFO, $"Enumerating collection at {location}", null, null);
             if (!location.Valid())
             {
-                Logger.WriteLineException($"Invalid location. Location: {location}", new ArgumentNullException(nameof(location)));
+                Logger.WriteLine(MessageChanel.ERROR, $"Invalid location. Location: {location}", new StackTrace(1), new ArgumentNullException(nameof(location)));
                 return new string[0].ToAsyncEnumerable();
             }
             if (!IsCollection(location))
             {
-                Logger.WriteLineException($"Location is not collection. Location: {location}", new ArgumentException(nameof(location)));
+                Logger.WriteLine(MessageChanel.ERROR, $"Location is not collection. Location: {location}", new StackTrace(1), new ArgumentException(nameof(location)));
                 return new string[0].ToAsyncEnumerable();
             }
             try { return EnumerateCollectionAsyncInternal(location); }
-            catch (Exception exception) { Logger.WriteLineException($"Exception while enumerating {location}.", exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while enumerating {location}.", new StackTrace(1), exception); }
             return new string[0].ToAsyncEnumerable();
         }
         protected abstract IAsyncEnumerable<string> EnumerateCollectionAsyncInternal(string location);
@@ -207,18 +208,18 @@ namespace BloodShadow.Core.SaveSystem.StorageModule
         {
             if (!location.Valid())
             {
-                Logger.WriteLineException("Empty watcher location", new ArgumentNullException(nameof(location)));
+                Logger.WriteLine(MessageChanel.ERROR, "Empty watcher location", new StackTrace(1), new ArgumentNullException(nameof(location)));
                 return null!;
             }
             if (!IsCollection(location))
             {
-                Logger.WriteLineException($"Location is not collection. Location: {location}", new ArgumentException(nameof(location)));
+                Logger.WriteLine(MessageChanel.ERROR, $"Location is not collection. Location: {location}", new StackTrace(1), new ArgumentException($"Location is not collection. Location: {location}", nameof(location)));
                 return null!;
             }
             StorageWatcher sw = null!;
             try { sw = CreateWatcherInternal(location); }
-            catch (Exception exception) { Logger.WriteLineException($"Exception while creating watcher for {location}.", exception); }
-            finally { if (sw == null) { Logger.WriteLineWarning("Watcher was created but result is null"); } }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while creating watcher for {location}.", new StackTrace(1), exception); }
+            finally { if (sw == null) { Logger.WriteLine(MessageChanel.WARN, "Watcher was created but result is null", null, null); } }
             return sw;
         }
         protected abstract StorageWatcher CreateWatcherInternal(string location);
