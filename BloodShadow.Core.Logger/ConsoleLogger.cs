@@ -11,7 +11,7 @@ namespace BloodShadow.Core.Logger
         public const ConsoleColor MSG_FORE_COLOR = ConsoleColor.White;
         public const ConsoleColor MSG_BACK_COLOR = ConsoleColor.Black;
 
-        protected override void WriteInternal(MessageChanel chanel, LoggerLabel label, string message, StackTrace? stackTrace, Exception? exception)
+        protected override void WriteInternal(MessageChanel chanel, LoggerLabel label, string template, StackTrace? stackTrace, Exception? exception, params object[] datas)
         {
             ConsoleColor cBC = Console.BackgroundColor;
             ConsoleColor cFC = Console.ForegroundColor;
@@ -45,7 +45,7 @@ namespace BloodShadow.Core.Logger
                 Console.BackgroundColor = EXP_BACK_COLOR;
                 Console.ForegroundColor = EXP_FORE_COLOR;
             }
-            Console.Write($"[{DateTime.Now:dd.MM.yyyy HH:mm:ss}-{chanel.LoggerString}[{chanel.Level}]] [{label.Label}] {message}\n{stackTrace}\n{exception}");
+            Console.Write($"[{DateTime.Now:dd.MM.yyyy HH:mm:ss}-{chanel.LoggerString}[{chanel.Level}]] [{label.Label}] {string.Format(template, datas)}\n{stackTrace}\n{exception}");
             Console.ForegroundColor = cFC;
             Console.BackgroundColor = cBC;
         }

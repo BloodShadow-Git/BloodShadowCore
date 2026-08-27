@@ -16,7 +16,7 @@ namespace BloodShadow.Core.SaveSystem.EncryptModule
                 return [];
             }
             try { return EncryptInternal(source); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while encrypting bytes.", new StackTrace(1), exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Exception while encrypting bytes.", new StackTrace(1), exception); }
             return [];
         }
         protected abstract byte[] EncryptInternal(byte[] source);
@@ -28,7 +28,7 @@ namespace BloodShadow.Core.SaveSystem.EncryptModule
                 return [];
             }
             try { return await EncryptAsyncInternal(source); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while encrypting bytes.", new StackTrace(1), exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Exception while encrypting bytes.", new StackTrace(1), exception); }
             return [];
         }
         protected abstract Task<byte[]> EncryptAsyncInternal(byte[] source);
@@ -40,7 +40,7 @@ namespace BloodShadow.Core.SaveSystem.EncryptModule
                 return [];
             }
             try { return DecryptInternal(source); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while decrypting bytes.", new StackTrace(1), exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Exception while decrypting bytes.", new StackTrace(1), exception); }
             return [];
         }
         protected abstract byte[] DecryptInternal(byte[] source);
@@ -52,7 +52,7 @@ namespace BloodShadow.Core.SaveSystem.EncryptModule
                 return [];
             }
             try { return await DecryptAsyncInternal(source); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while decrypting bytes.", new StackTrace(1), exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Exception while decrypting bytes.", new StackTrace(1), exception); }
             return [];
         }
         protected abstract Task<byte[]> DecryptAsyncInternal(byte[] source);

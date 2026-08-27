@@ -16,7 +16,7 @@
             }
             byte[] result = [];
             try { result = SerializeInternal(obj); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Serialize exception", new StackTrace(1), exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Serialize exception", new StackTrace(1), exception); }
             finally { if (!result.Valid() && obj != null) { Logger.WriteLine(MessageChanel.WARN, "Empty serialize result but object to serialize is not null", null, null); } }
             return result;
         }
@@ -30,7 +30,7 @@
             }
             byte[] result = [];
             try { result = await SerializeAsyncInternal(obj); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Serialize exception", new StackTrace(1), exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Serialize exception", new StackTrace(1), exception); }
             finally { if (!result.Valid() && obj != null) { Logger.WriteLine(MessageChanel.WARN, "Empty serialize result but object to serialize is not null", null, null); } }
             return result;
         }
@@ -40,8 +40,8 @@
             if (!source.Valid()) { Logger.WriteLine(MessageChanel.WARN, "Empty source. If it normal you can ignore this warning", null, null); }
             T? result = default;
             try { result = DeserializeInternal<T>(source); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Deserialize exception", new StackTrace(1), exception); }
-            finally { if (source.Valid() && result == null) { Logger.WriteLine(MessageChanel.WARN, $"Empty deserialize result but source string is not empty", null, null); } }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Deserialize exception", new StackTrace(1), exception); }
+            finally { if (source.Valid() && result == null) { Logger.WriteLine(MessageChanel.WARN, "Empty deserialize result but source string is not empty", null, null); } }
             return result!;
         }
         protected abstract T DeserializeInternal<T>(byte[] source);
@@ -50,8 +50,8 @@
             if (!source.Valid()) { Logger.WriteLine(MessageChanel.WARN, "Empty source. If it normal you can ignore this warning", null, null); }
             T? result = default;
             try { result = await DeserializeAsyncInternal<T>(source); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Deserialize exception", new StackTrace(1), exception); }
-            finally { if (source.Valid() && result == null) { Logger.WriteLine(MessageChanel.WARN, $"Empty deserialize result but source string is not empty", null, null); } }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Deserialize exception", new StackTrace(1), exception); }
+            finally { if (source.Valid() && result == null) { Logger.WriteLine(MessageChanel.WARN, "Empty deserialize result but source string is not empty", null, null); } }
             return result!;
         }
         protected abstract Task<T> DeserializeAsyncInternal<T>(byte[] source);

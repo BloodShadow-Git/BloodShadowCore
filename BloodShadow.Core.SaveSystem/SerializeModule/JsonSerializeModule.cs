@@ -3,11 +3,11 @@ using Newtonsoft.Json;
 
 namespace BloodShadow.Core.SaveSystem.SerializeModule
 {
-    public class JsonSerializeModule : SerializeModule
+    public class JsonUTF8SerializeModule : SerializeModule
     {
         private readonly JsonSerializerSettings _settings;
 
-        public JsonSerializeModule()
+        public JsonUTF8SerializeModule()
         {
             _settings = new JsonSerializerSettings()
             {
@@ -17,7 +17,7 @@ namespace BloodShadow.Core.SaveSystem.SerializeModule
             };
         }
 
-        public JsonSerializeModule(JsonSerializerSettings settings) : this() { _settings = settings; }
+        public JsonUTF8SerializeModule(JsonSerializerSettings settings) : this() { _settings = settings; }
 
         protected override byte[] SerializeInternal(object obj) => Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(obj, _settings));
         protected override Task<byte[]> SerializeAsyncInternal(object obj) => Task.Run(() => Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(obj, _settings)));

@@ -4,9 +4,9 @@ namespace BloodShadow.Core.Logger
 {
     public class LoggerLabel
     {
-        private string _label;
-        private string _combine;
-        private LoggerLabel? _parent;
+        private readonly string _label;
+        private readonly string _combine;
+        private readonly LoggerLabel? _parent;
 
         public string Label
         {
@@ -33,7 +33,7 @@ namespace BloodShadow.Core.Logger
             if (parent != null) { _parent = parent; }
         }
         public LoggerLabel(string label) : this(label, string.Empty) { }
-        public void WriteLine(MessageChanel chanel, string message, StackTrace? stackTrace, Exception? exception) { Logger.WriteLine(chanel, this, message, stackTrace, exception); }
-        public void Write(MessageChanel chanel, string message, StackTrace? stackTrace, Exception? exception) { Logger.Write(chanel, this, message, stackTrace, exception); }
+        public void WriteLine(MessageChanel chanel, string template, StackTrace? stackTrace, Exception? exception, params object[] datas) { Logger.WriteLine(chanel, this, template, stackTrace, exception, datas); }
+        public void Write(MessageChanel chanel, string template, StackTrace? stackTrace, Exception? exception, params object[] datas) { Logger.Write(chanel, this, template, stackTrace, exception, datas); }
     }
 }

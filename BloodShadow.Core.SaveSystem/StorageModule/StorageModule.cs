@@ -8,220 +8,185 @@ namespace BloodShadow.Core.SaveSystem.StorageModule
     {
         protected LoggerLabel Logger;
         public StorageModule() { Logger = new(GetType().Name); }
-        public bool Write(string location, byte[] content)
+        public bool Write(StorageKey location, byte[] content)
         {
-            if (!location.Valid())
+            if (!VerifyResource(location))
             {
-                Logger.WriteLine(MessageChanel.WARN, $"Empty location. Location: {location}", null, null);
+                Logger.WriteLine(MessageChanel.WARN, "Empty location. Location: {0}", null, null, location);
                 return false;
             }
-            Logger.WriteLine(MessageChanel.INFO, $"Writing to {location}", null, null);
-            if (content.Valid()) { Logger.WriteLine(MessageChanel.WARN, "Empty content", null, null); }
+            Logger.WriteLine(MessageChanel.INFO, "Writing to {0}", null, null, location);
+            if (!content.Valid()) { Logger.WriteLine(MessageChanel.WARN, "Empty content", null, null); }
             bool res = false;
             try { res = WriteInternal(location, content); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while writing at {location}.", new StackTrace(1), exception); }
-            finally { if (!res) { Logger.WriteLine(MessageChanel.WARN, $"Failed to write to {location}", null, null); } }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Exception while writing at {0}.", new StackTrace(1), exception, location); }
+            finally { if (!res) { Logger.WriteLine(MessageChanel.WARN, "Failed to write to {0}", null, null, location); } }
             return res;
         }
-        protected abstract bool WriteInternal(string location, byte[] content);
-        public async Task<bool> WriteAsync(string location, byte[] content)
+        protected abstract bool WriteInternal(StorageKey location, byte[] content);
+        public async Task<bool> WriteAsync(StorageKey location, byte[] content)
         {
-            if (!location.Valid())
+            if (!await VerifyResourceAsync(location))
             {
-                Logger.WriteLine(MessageChanel.WARN, $"Empty location. Location: {location}", null, null);
+                Logger.WriteLine(MessageChanel.WARN, "Empty location. Location: {0}", null, null, location);
                 return false;
             }
-            Logger.WriteLine(MessageChanel.INFO, $"Writing to {location}", null, null);
-            if (content.Valid()) { Logger.WriteLine(MessageChanel.WARN, "Empty content", null, null); }
+            Logger.WriteLine(MessageChanel.INFO, "Writing to {0}", null, null, location);
+            if (!content.Valid()) { Logger.WriteLine(MessageChanel.WARN, "Empty content", null, null); }
             bool res = false;
             try { res = await WriteAsyncInternal(location, content); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while writing at {location}.", new StackTrace(1), exception); }
-            finally { if (!res) { Logger.WriteLine(MessageChanel.WARN, $"Failed to write to {location}", null, null); } }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Exception while writing at {0}.", new StackTrace(1), exception, location); }
+            finally { if (!res) { Logger.WriteLine(MessageChanel.WARN, "Failed to write to {0}", null, null, location); } }
             return res;
         }
-        protected abstract Task<bool> WriteAsyncInternal(string location, byte[] content);
-        public byte[] Read(string location)
+        protected abstract Task<bool> WriteAsyncInternal(StorageKey location, byte[] content);
+        public byte[] Read(StorageKey location)
         {
-            if (string.IsNullOrEmpty(location))
+            if (!VerifyResource(location))
             {
-                Logger.WriteLine(MessageChanel.WARN, $"Empty location. Location: {location}", null, null);
+                Logger.WriteLine(MessageChanel.WARN, "Empty location. Location: {0}", null, null, location);
                 return [];
             }
-            Logger.WriteLine(MessageChanel.INFO, $"Reading from {location}", null, null);
+            Logger.WriteLine(MessageChanel.INFO, "Reading from {0}", null, null, location);
             byte[] result = [];
             try { result = ReadInternal(location); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while reading from {location}.", new StackTrace(1), exception); }
-            finally { if (!result.Valid()) { Logger.WriteLine(MessageChanel.WARN, $"Empty file content. If it normal you can ignore this warning", null, null); } }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Exception while reading from {0}.", new StackTrace(1), exception, location); }
+            finally { if (!result.Valid()) { Logger.WriteLine(MessageChanel.WARN, "Empty file content. If it normal you can ignore this warning", null, null); } }
             return result;
         }
-        protected abstract byte[] ReadInternal(string location);
-        public async Task<byte[]> ReadAsync(string location)
+        protected abstract byte[] ReadInternal(StorageKey location);
+        public async Task<byte[]> ReadAsync(StorageKey location)
         {
-            if (string.IsNullOrEmpty(location))
+            if (!await VerifyResourceAsync(location))
             {
-                Logger.WriteLine(MessageChanel.WARN, $"Empty location. Location: {location}", null, null);
+                Logger.WriteLine(MessageChanel.WARN, "Empty location. Location: {0}", null, null, location);
                 return [];
             }
-            Logger.WriteLine(MessageChanel.INFO, $"Reading from {location}", null, null);
+            Logger.WriteLine(MessageChanel.INFO, "Reading from {0}", null, null, location);
             byte[] result = [];
             try { result = await ReadAsyncInternal(location); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while reading at {location}.", new StackTrace(1), exception); }
-            finally { if (!result.Valid()) { Logger.WriteLine(MessageChanel.WARN, $"Empty file content. If it normal you can ignore this warning", null, null); } }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Exception while reading at {0}.", new StackTrace(1), exception); }
+            finally { if (!result.Valid()) { Logger.WriteLine(MessageChanel.WARN, "Empty file content. If it normal you can ignore this warning", null, null); } }
             return result;
         }
-        protected abstract Task<byte[]> ReadAsyncInternal(string location);
-        public bool VerifyCollection(string collectionLocation, bool createIfNotExists)
+        protected abstract Task<byte[]> ReadAsyncInternal(StorageKey location);
+        public bool VerifyCollection(StorageKey collectionLocation, bool createIfNotExists)
         {
-            if (!collectionLocation.Valid())
-            {
-                Logger.WriteLine(MessageChanel.WARN, $"Empty collection location. Location: {collectionLocation}", null, null);
-                return false;
-            }
-            Logger.WriteLine(MessageChanel.INFO, $"Verifying collection at {collectionLocation}", null, null);
+            Logger.WriteLine(MessageChanel.INFO, "Verifying collection at {0}", null, null, collectionLocation);
             bool res = false;
             try { res = VerifyCollectionInternal(collectionLocation, createIfNotExists); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while verifying collection at {collectionLocation}.", new StackTrace(1), exception); }
-            finally { if (createIfNotExists && !res) { Logger.WriteLine(MessageChanel.WARN, $"Collection at {collectionLocation} cannot be fixed", null, null); } }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Exception while verifying collection at {0}.", new StackTrace(1), exception, collectionLocation); }
+            finally { if (createIfNotExists && !res) { Logger.WriteLine(MessageChanel.WARN, "Collection at {0} cannot be fixed", null, null, collectionLocation); } }
             return res;
 
         }
-        public bool VerifyCollection(string collectionLocation) => VerifyCollection(collectionLocation, false);
-        protected abstract bool VerifyCollectionInternal(string collectionLocation, bool createIfNotExists);
-        public async Task<bool> VerifyCollectionAsync(string collectionLocation, bool createIfNotExists)
+        public bool VerifyCollection(StorageKey collectionLocation) => VerifyCollection(collectionLocation, false);
+        protected abstract bool VerifyCollectionInternal(StorageKey collectionLocation, bool createIfNotExists);
+        public async Task<bool> VerifyCollectionAsync(StorageKey collectionLocation, bool createIfNotExists)
         {
-            if (!collectionLocation.Valid())
-            {
-                Logger.WriteLine(MessageChanel.WARN, $"Empty collection location. Location: {collectionLocation}", null, null);
-                return false;
-            }
-            Logger.WriteLine(MessageChanel.INFO, $"Verifying collection at {collectionLocation}", null, null);
+            Logger.WriteLine(MessageChanel.INFO, "Verifying collection at {0}", null, null, collectionLocation);
             bool res = false;
             try { res = await VerifyCollectionAsyncInternal(collectionLocation, createIfNotExists); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while verifying collection at {collectionLocation}.", new StackTrace(1), exception); }
-            finally { if (createIfNotExists && !res) { Logger.WriteLine(MessageChanel.WARN, $"Collection at {collectionLocation} cannot be fixed", null, null); } }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Exception while verifying collection at {0}.", new StackTrace(1), exception, collectionLocation); }
+            finally { if (createIfNotExists && !res) { Logger.WriteLine(MessageChanel.WARN, "Collection at {0} cannot be fixed", null, null, collectionLocation); } }
             return res;
 
         }
-        public Task<bool> VerifyCollectionAsync(string collectionLocation) => VerifyCollectionAsync(collectionLocation, false);
-        protected abstract Task<bool> VerifyCollectionAsyncInternal(string collectionLocation, bool createIfNotExists);
-        public bool VerifyResource(string resourceLocation, bool createIfNotExists)
+        public Task<bool> VerifyCollectionAsync(StorageKey collectionLocation) => VerifyCollectionAsync(collectionLocation, false);
+        protected abstract Task<bool> VerifyCollectionAsyncInternal(StorageKey collectionLocation, bool createIfNotExists);
+        public bool VerifyResource(StorageKey resourceLocation, bool createIfNotExists)
         {
-            if (!resourceLocation.Valid())
-            {
-                Logger.WriteLine(MessageChanel.WARN, $"Empty resource location. Location: {resourceLocation}", null, null);
-                return false;
-            }
-            Logger.WriteLine(MessageChanel.INFO, $"Verifying resource at {resourceLocation}", null, null);
+            Logger.WriteLine(MessageChanel.INFO, "Verifying resource at {0}", null, null, resourceLocation);
             bool res = false;
             try { res = VerifyResourceInternal(resourceLocation, createIfNotExists); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while verifying resource at {resourceLocation}.", new StackTrace(1), exception); }
-            finally { if (createIfNotExists && !res) { Logger.WriteLine(MessageChanel.WARN, $"Resource at {resourceLocation} cannot be fixed", null, null); } }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Exception while verifying resource at {0}.", new StackTrace(1), exception, resourceLocation); }
+            finally { if (createIfNotExists && !res) { Logger.WriteLine(MessageChanel.WARN, "Resource at {0} cannot be fixed", null, null, resourceLocation); } }
             return res;
         }
-        public bool VerifyResource(string resourceLocation) => VerifyResource(resourceLocation, false);
-        protected abstract bool VerifyResourceInternal(string resourceLocation, bool createIfNotExists);
-        public async Task<bool> VerifyResourceAsync(string resourceLocation, bool createIfNotExists)
+        public bool VerifyResource(StorageKey resourceLocation) => VerifyResource(resourceLocation, false);
+        protected abstract bool VerifyResourceInternal(StorageKey resourceLocation, bool createIfNotExists);
+        public async Task<bool> VerifyResourceAsync(StorageKey resourceLocation, bool createIfNotExists)
         {
-            if (!resourceLocation.Valid())
-            {
-                Logger.WriteLine(MessageChanel.WARN, $"Empty resource location. Location: {resourceLocation}", null, null);
-                return false;
-            }
-            Logger.WriteLine(MessageChanel.INFO, $"Verifying resource at {resourceLocation}", null, null);
+            Logger.WriteLine(MessageChanel.INFO, "Verifying resource at {0}", null, null, resourceLocation);
             bool res = false;
             try { res = await VerifyResourceAsyncInternal(resourceLocation, createIfNotExists); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while verifying resource at {resourceLocation}.", new StackTrace(1), exception); }
-            finally { if (createIfNotExists && !res) { Logger.WriteLine(MessageChanel.WARN, $"Resource at {resourceLocation} cannot be fixed", null, null); } }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Exception while verifying resource at {0}.", new StackTrace(1), exception, resourceLocation); }
+            finally { if (createIfNotExists && !res) { Logger.WriteLine(MessageChanel.WARN, "Resource at {0} cannot be fixed", null, null, resourceLocation); } }
             return res;
         }
-        public Task<bool> VerifyResourceAsync(string resourceLocation) => VerifyResourceAsync(resourceLocation, false);
-        protected abstract Task<bool> VerifyResourceAsyncInternal(string resourceLocation, bool createIfNotExists);
-        public bool IsResource(string location)
+        public Task<bool> VerifyResourceAsync(StorageKey resourceLocation) => VerifyResourceAsync(resourceLocation, false);
+        protected abstract Task<bool> VerifyResourceAsyncInternal(StorageKey resourceLocation, bool createIfNotExists);
+        public bool IsResource(StorageKey location)
         {
-            Logger.WriteLine(MessageChanel.INFO, $"Checking resource at {location}", null, null);
+            Logger.WriteLine(MessageChanel.INFO, "Checking resource at {0}", null, null, location);
             try { return IsResourceInternal(location); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while checking resource", new StackTrace(1), exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Exception while checking resource", new StackTrace(1), exception); }
             return false;
         }
-        protected abstract bool IsResourceInternal(string location);
-        public async Task<bool> IsResourceAsync(string location)
+        protected abstract bool IsResourceInternal(StorageKey location);
+        public async Task<bool> IsResourceAsync(StorageKey location)
         {
-            Logger.WriteLine(MessageChanel.INFO, $"Checking resource at {location}", null, null);
+            Logger.WriteLine(MessageChanel.INFO, "Checking resource at {0}", null, null, location);
             try { return await IsResourceAsyncInternal(location); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while checking resource", new StackTrace(1), exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Exception while checking resource", new StackTrace(1), exception); }
             return false;
         }
-        protected abstract Task<bool> IsResourceAsyncInternal(string location);
-        public bool IsCollection(string location)
+        protected abstract Task<bool> IsResourceAsyncInternal(StorageKey location);
+        public bool IsCollection(StorageKey location)
         {
-            Logger.WriteLine(MessageChanel.INFO, $"Checking collection at {location}", null, null);
+            Logger.WriteLine(MessageChanel.INFO, "Checking collection at {0}", null, null, location);
             try { return IsCollectionInternal(location); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while checking collection", new StackTrace(1), exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Exception while checking collection", new StackTrace(1), exception); }
             return false;
         }
-        protected abstract bool IsCollectionInternal(string location);
-        public async Task<bool> IsCollectionAsync(string location)
+        protected abstract bool IsCollectionInternal(StorageKey location);
+        public async Task<bool> IsCollectionAsync(StorageKey location)
         {
-            Logger.WriteLine(MessageChanel.INFO, $"Checking collection at {location}", null, null);
+            Logger.WriteLine(MessageChanel.INFO, "Checking collection at {0}", null, null, location);
             try { return await IsCollectionAsyncInternal(location); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while checking collection", new StackTrace(1), exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Exception while checking collection", new StackTrace(1), exception); }
             return false;
         }
-        protected abstract Task<bool> IsCollectionAsyncInternal(string location);
-        public IEnumerable<string> EnumerateCollection(string location)
+        protected abstract Task<bool> IsCollectionAsyncInternal(StorageKey location);
+        public IEnumerable<string> EnumerateCollection(StorageKey location)
         {
-            Logger.WriteLine(MessageChanel.INFO, $"Enumerating collection at {location}", null, null);
-            if (!location.Valid())
-            {
-                Logger.WriteLine(MessageChanel.ERROR, $"Invalid location. Location: {location}", new StackTrace(1), new ArgumentNullException(nameof(location)));
-                return [];
-            }
+            Logger.WriteLine(MessageChanel.INFO, "Enumerating collection at {0}", null, null, location);
             if (!IsCollection(location))
             {
-                Logger.WriteLine(MessageChanel.ERROR, $"Location is not collection. Location: {location}", new StackTrace(1), new ArgumentException(nameof(location)));
+                Logger.WriteLine(MessageChanel.ERROR, "Location is not collection. Location: {0}", new StackTrace(1), new ArgumentException("Location is not collection", nameof(location)), location);
                 return [];
             }
             try { return EnumerateCollectionInternal(location); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while enumerating {location}.", new StackTrace(1), exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Exception while enumerating {0}.", new StackTrace(1), exception, location); }
             return [];
         }
-        protected abstract IEnumerable<string> EnumerateCollectionInternal(string location);
-        public IAsyncEnumerable<string> EnumerateCollectionAsync(string location)
+        protected abstract IEnumerable<string> EnumerateCollectionInternal(StorageKey location);
+        public IAsyncEnumerable<string> EnumerateCollectionAsync(StorageKey location)
         {
-            Logger.WriteLine(MessageChanel.INFO, $"Enumerating collection at {location}", null, null);
-            if (!location.Valid())
-            {
-                Logger.WriteLine(MessageChanel.ERROR, $"Invalid location. Location: {location}", new StackTrace(1), new ArgumentNullException(nameof(location)));
-                return new string[0].ToAsyncEnumerable();
-            }
+            Logger.WriteLine(MessageChanel.INFO, "Enumerating collection at {location}", null, null, location);
             if (!IsCollection(location))
             {
-                Logger.WriteLine(MessageChanel.ERROR, $"Location is not collection. Location: {location}", new StackTrace(1), new ArgumentException(nameof(location)));
-                return new string[0].ToAsyncEnumerable();
+                Logger.WriteLine(MessageChanel.ERROR, "Location is not collection. Location: {0}", new StackTrace(1), new ArgumentException("Location is not collection", nameof(location)), location);
+                return Array.Empty<string>().ToAsyncEnumerable();
             }
             try { return EnumerateCollectionAsyncInternal(location); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while enumerating {location}.", new StackTrace(1), exception); }
-            return new string[0].ToAsyncEnumerable();
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Exception while enumerating {0}.", new StackTrace(1), exception, location); }
+            return Array.Empty<string>().ToAsyncEnumerable();
         }
-        protected abstract IAsyncEnumerable<string> EnumerateCollectionAsyncInternal(string location);
-        public StorageWatcher CreateWatcher(string location)
+        protected abstract IAsyncEnumerable<string> EnumerateCollectionAsyncInternal(StorageKey location);
+        public StorageWatcher CreateWatcher(StorageKey location)
         {
-            if (!location.Valid())
-            {
-                Logger.WriteLine(MessageChanel.ERROR, "Empty watcher location", new StackTrace(1), new ArgumentNullException(nameof(location)));
-                return null!;
-            }
             if (!IsCollection(location))
             {
-                Logger.WriteLine(MessageChanel.ERROR, $"Location is not collection. Location: {location}", new StackTrace(1), new ArgumentException($"Location is not collection. Location: {location}", nameof(location)));
+                Logger.WriteLine(MessageChanel.ERROR, "Location is not collection. Location: {0}", new StackTrace(1), new ArgumentException("Location is not collection", nameof(location)), location);
                 return null!;
             }
             StorageWatcher sw = null!;
             try { sw = CreateWatcherInternal(location); }
-            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, $"Exception while creating watcher for {location}.", new StackTrace(1), exception); }
+            catch (Exception exception) { Logger.WriteLine(MessageChanel.ERROR, "Exception while creating watcher for {0}.", new StackTrace(1), exception, location); }
             finally { if (sw == null) { Logger.WriteLine(MessageChanel.WARN, "Watcher was created but result is null", null, null); } }
             return sw;
         }
-        protected abstract StorageWatcher CreateWatcherInternal(string location);
+        protected abstract StorageWatcher CreateWatcherInternal(StorageKey location);
     }
 }

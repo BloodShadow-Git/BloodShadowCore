@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using BloodShadow.Core.Extensions;
 using BloodShadow.Core.Logger;
+using BloodShadow.Core.SaveSystem.StorageModule;
 
 namespace BloodShadow.Core.SaveSystem
 {
@@ -19,14 +20,14 @@ namespace BloodShadow.Core.SaveSystem
             Label = new(GetType().Name);
         }
 
-        public virtual bool Save(string location, object data, bool createIfNotExists = true)
+        public virtual bool Save(StorageKey location, object data, bool createIfNotExists = true)
         {
             try
             {
                 byte[] dataToWrite = SerializeModule.Serialize(data);
                 if (!dataToWrite.Valid())
                 {
-                    Label.WriteLine(MessageChanel.WARN, $"Serialized data not valid. Location: {location}", null, null);
+                    Label.WriteLine(MessageChanel.WARN, "Serialized data not valid. Location: {0}", null, null, location);
                     return false;
                 }
                 if (EncryptModule != null)
@@ -34,31 +35,31 @@ namespace BloodShadow.Core.SaveSystem
                     dataToWrite = EncryptModule.Encrypt(dataToWrite);
                     if (!dataToWrite.Valid())
                     {
-                        Label.WriteLine(MessageChanel.WARN, $"Data after encryption is not valid. Location: {location}", null, null);
+                        Label.WriteLine(MessageChanel.WARN, "Data after encryption is not valid. Location: {0}", null, null, location);
                         return false;
                     }
                 }
                 bool resourceAvailable = VerifyResource(location, createIfNotExists);
                 if (!resourceAvailable)
                 {
-                    Label.WriteLine(MessageChanel.WARN, $"No resource at {location}", null, null);
+                    Label.WriteLine(MessageChanel.WARN, "No resource at {0}", null, null, location);
                     return false;
                 }
                 bool result = IOModule.Write(location, dataToWrite);
-                if (!result) { Label.WriteLine(MessageChanel.WARN, $"Failed to write into {location}", null, null); }
+                if (!result) { Label.WriteLine(MessageChanel.WARN, "Failed to write into {0}", null, null, location); }
                 return result;
             }
-            catch (Exception exception) { Label.WriteLine(MessageChanel.ERROR, $"Exception while save to {location}.", new StackTrace(1), exception); }
+            catch (Exception exception) { Label.WriteLine(MessageChanel.ERROR, "Exception while save to {0}.", new StackTrace(1), exception, location); }
             return false;
         }
-        public virtual async Task<bool> SaveAsync(string location, object data, bool createIfNotExists = true)
+        public virtual async Task<bool> SaveAsync(StorageKey location, object data, bool createIfNotExists = true)
         {
             try
             {
                 byte[] dataToWrite = await SerializeModule.SerializeAsync(data);
                 if (!dataToWrite.Valid())
                 {
-                    Label.WriteLine(MessageChanel.WARN, $"Serialized data not valid. Location: {location}", null, null);
+                    Label.WriteLine(MessageChanel.WARN, "Serialized data not valid. Location: {0}", null, null, location);
                     return false;
                 }
                 if (EncryptModule != null)
@@ -66,38 +67,38 @@ namespace BloodShadow.Core.SaveSystem
                     dataToWrite = await EncryptModule.EncryptAsync(dataToWrite);
                     if (!dataToWrite.Valid())
                     {
-                        Label.WriteLine(MessageChanel.WARN, $"Data after encryption is not valid. Location: {location}", null, null);
+                        Label.WriteLine(MessageChanel.WARN, "Data after encryption is not valid. Location: {0}", null, null, location);
                         return false;
                     }
                 }
                 bool resourceAvailable = await VerifyResourceAsync(location, createIfNotExists);
                 if (!resourceAvailable)
                 {
-                    Label.WriteLine(MessageChanel.WARN, $"No resource at {location}", null, null);
+                    Label.WriteLine(MessageChanel.WARN, "No resource at {0}", null, null, location);
                     return false;
                 }
                 bool result = await IOModule.WriteAsync(location, dataToWrite);
-                if (!result) { Label.WriteLine(MessageChanel.WARN, $"Failed to write into {location}", null, null); }
+                if (!result) { Label.WriteLine(MessageChanel.WARN, "Failed to write into {0}", null, null, location); }
                 return result;
             }
-            catch (Exception exception) { Label.WriteLine(MessageChanel.ERROR, $"Exception while save to {location}.", new StackTrace(1), exception); }
+            catch (Exception exception) { Label.WriteLine(MessageChanel.ERROR, "Exception while save to {0}.", new StackTrace(1), exception, location); }
             return false;
         }
 
-        public virtual T? Load<T>(string location, bool createIfNotExists = true)
+        public virtual T? Load<T>(StorageKey location, bool createIfNotExists = true)
         {
             try
             {
                 bool resourceAvailable = VerifyResource(location, createIfNotExists);
                 if (!resourceAvailable)
                 {
-                    Label.WriteLine(MessageChanel.WARN, $"No resource at {location}", null, null);
+                    Label.WriteLine(MessageChanel.WARN, "No resource at {0}", null, null, location);
                     return default;
                 }
                 byte[] data = IOModule.Read(location);
                 if (data.Valid())
                 {
-                    Label.WriteLine(MessageChanel.WARN, $"Data from {location} is not valid", null, null);
+                    Label.WriteLine(MessageChanel.WARN, "Data from {0} is not valid", null, null, location);
                     return default;
                 }
                 if (EncryptModule != null)
@@ -105,31 +106,31 @@ namespace BloodShadow.Core.SaveSystem
                     data = EncryptModule.Decrypt(data);
                     if (!data.Valid())
                     {
-                        Label.WriteLine(MessageChanel.WARN, $"Data after decrypt is not valid. Location: {location}", null, null);
+                        Label.WriteLine(MessageChanel.WARN, "Data after decrypt is not valid. Location: {0}", null, null, location);
                         return default;
                     }
                 }
                 T? result = SerializeModule.Deserialize<T>(data);
-                if (result == null) { Label.WriteLine(MessageChanel.WARN, $"Failed to deserialize data from {location}", null, null); }
+                if (result == null) { Label.WriteLine(MessageChanel.WARN, "Failed to deserialize data from {0}", null, null, location); }
                 return result;
             }
-            catch (Exception exception) { Label.WriteLine(MessageChanel.ERROR, $"Exception while load from {location}.", new StackTrace(1), exception); }
+            catch (Exception exception) { Label.WriteLine(MessageChanel.ERROR, "Exception while load from {0}.", new StackTrace(1), exception, location); }
             return default;
         }
-        public virtual async Task<T?> LoadAsync<T>(string location, bool createIfNotExists = true)
+        public virtual async Task<T?> LoadAsync<T>(StorageKey location, bool createIfNotExists = true)
         {
             try
             {
                 bool resourceAvailable = await VerifyResourceAsync(location, createIfNotExists);
                 if (!resourceAvailable)
                 {
-                    Label.WriteLine(MessageChanel.WARN, $"No resource at {location}", null, null);
+                    Label.WriteLine(MessageChanel.WARN, "No resource at {0}", null, null, location);
                     return default;
                 }
                 byte[] data = await IOModule.ReadAsync(location);
                 if (data.Valid())
                 {
-                    Label.WriteLine(MessageChanel.WARN, $"Data from {location} is not valid", null, null);
+                    Label.WriteLine(MessageChanel.WARN, "Data from {0} is not valid", null, null, location);
                     return default;
                 }
                 if (EncryptModule != null)
@@ -137,21 +138,23 @@ namespace BloodShadow.Core.SaveSystem
                     data = await EncryptModule.DecryptAsync(data);
                     if (!data.Valid())
                     {
-                        Label.WriteLine(MessageChanel.WARN, $"Data after decrypt is not valid. Location: {location}", null, null);
+                        Label.WriteLine(MessageChanel.WARN, "Data after decrypt is not valid. Location: {0}", null, null, location);
                         return default;
                     }
                 }
                 T? result = await SerializeModule.DeserializeAsync<T>(data);
-                if (result == null) { Label.WriteLine(MessageChanel.WARN, $"Failed to deserialize data from {location}", null, null); }
+                if (result == null) { Label.WriteLine(MessageChanel.WARN, "Failed to deserialize data from {0}", null, null, location); }
                 return result;
             }
-            catch (Exception exception) { Label.WriteLine(MessageChanel.ERROR, $"Exception while load from {location}.", new StackTrace(1), exception); }
+            catch (Exception exception) { Label.WriteLine(MessageChanel.ERROR, "Exception while load from {0}.", new StackTrace(1), exception, location); }
             return default;
         }
 
-        public virtual bool VerifyCollection(string collectionLocation, bool createIfNotExists) => IOModule.VerifyCollection(collectionLocation, createIfNotExists);
-        public virtual Task<bool> VerifyCollectionAsync(string collectionLocation, bool createIfNotExists) => IOModule.VerifyCollectionAsync(collectionLocation, createIfNotExists);
-        public virtual bool VerifyResource(string resourceLocation, bool createIfNotExists) => IOModule.VerifyResource(resourceLocation, createIfNotExists);
-        public virtual Task<bool> VerifyResourceAsync(string resourceLocation, bool createIfNotExists) => IOModule.VerifyResourceAsync(resourceLocation, createIfNotExists);
+        public virtual bool VerifyCollection(StorageKey location, bool createIfNotExists) => IOModule.VerifyCollection(location, createIfNotExists);
+        public virtual Task<bool> VerifyCollectionAsync(StorageKey location, bool createIfNotExists) => IOModule.VerifyCollectionAsync(location, createIfNotExists);
+        public virtual bool VerifyResource(StorageKey location, bool createIfNotExists) => IOModule.VerifyResource(location, createIfNotExists);
+        public virtual Task<bool> VerifyResourceAsync(StorageKey location, bool createIfNotExists) => IOModule.VerifyResourceAsync(location, createIfNotExists);
     }
+
+    public class TestSaveSystem(StorageModule.StorageModule i, SerializeModule.SerializeModule s, EncryptModule.EncryptModule? e) : SaveSystem(i, s, e) { }
 }

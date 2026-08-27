@@ -9,10 +9,11 @@ namespace BloodShadow.Core.Logger
             get => _instance;
             set { if (value != null) { _instance = value; } }
         }
+        public static int MinLoggerLevel = 0;
 
         private static Logger _instance = new ConsoleLogger();
-        public static void WriteLine(MessageChanel chanel, LoggerLabel label, string message, StackTrace? stackTrace, Exception? exception) => Write(chanel, label, $"{message}\n", stackTrace, exception);
-        public static void Write(MessageChanel chanel, LoggerLabel label, string message, StackTrace? stackTrace, Exception? exception) => _instance.WriteInternal(chanel, label, message, stackTrace, exception);
-        protected abstract void WriteInternal(MessageChanel chanel, LoggerLabel label, string message, StackTrace? stackTrace, Exception? exception);
+        public static void WriteLine(MessageChanel chanel, LoggerLabel label, string template, StackTrace? stackTrace, Exception? exception, params object[] datas) => Write(chanel, label, $"{template}\n", stackTrace, exception, datas);
+        public static void Write(MessageChanel chanel, LoggerLabel label, string template, StackTrace? stackTrace, Exception? exception, params object[] datas) { if (chanel.Level >= MinLoggerLevel) { _instance.WriteInternal(chanel, label, template, stackTrace, exception, datas); } }
+        protected abstract void WriteInternal(MessageChanel chanel, LoggerLabel label, string template, StackTrace? stackTrace, Exception? exception, params object[] datas);
     }
 }

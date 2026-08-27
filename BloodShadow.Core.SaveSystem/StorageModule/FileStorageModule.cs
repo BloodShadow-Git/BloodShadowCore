@@ -4,53 +4,52 @@ namespace BloodShadow.Core.SaveSystem.StorageModule
 {
     public class FileStorageModule : StorageModule
     {
-        protected override bool WriteInternal(string path, byte[] content)
+        protected override bool WriteInternal(StorageKey location, byte[] content)
         {
-            File.WriteAllBytes(path, content);
+            File.WriteAllBytes(Path.Combine(location.Path), content);
             return true;
         }
-        protected override byte[] ReadInternal(string path) => File.ReadAllBytes(path);
+        protected override byte[] ReadInternal(StorageKey location) => File.ReadAllBytes(Path.Combine(location.Path));
 
-        protected override async Task<bool> WriteAsyncInternal(string path, byte[] content)
+        protected override async Task<bool> WriteAsyncInternal(StorageKey location, byte[] content)
         {
-            await File.WriteAllBytesAsync(path, content);
+            await File.WriteAllBytesAsync(Path.Combine(location.Path), content);
             return true;
         }
-        protected override Task<byte[]> ReadAsyncInternal(string path) => File.ReadAllBytesAsync(path);
+        protected override Task<byte[]> ReadAsyncInternal(StorageKey location) => File.ReadAllBytesAsync(Path.Combine(location.Path));
 
-        protected string BuildAndValidPath(string path)
+        protected override bool VerifyCollectionInternal(StorageKey location, bool fix)
         {
-            path = Path.GetFullPath(path);
-            Directory.CreateDirectory(path);
-            File.Create(path).Dispose();
-            return path;
-        }
-
-        protected override bool VerifyCollectionInternal(string collectionLocation, bool createIfNotExists)
-        {
-            if (collectionLocation != null && !Directory.Exists(collectionLocation)) { Directory.CreateDirectory(collectionLocation); }
-            return true;
-        }
-
-        protected override Task<bool> VerifyCollectionAsyncInternal(string collectionLocation, bool createIfNotExists) => Task.Run(() => VerifyCollectionInternal(collectionLocation, createIfNotExists));
-
-        protected override bool VerifyResourceInternal(string? filePath, bool fix)
-        {
-            if (filePath != null && !File.Exists(filePath))
+            string path = Path.Combine(location.Path);
+            if (!Directory.Exists(path))
             {
-                VerifyCollection(Path.GetDirectoryName(filePath)!);
-                File.Create(filePath).Dispose();
+                if (!fix) { return false; }
+                Directory.CreateDirectory(path);
             }
             return true;
         }
-        protected override Task<bool> VerifyResourceAsyncInternal(string collectionLocation, bool createIfNotExists) => Task.Run(() => VerifyResourceInternal(collectionLocation, createIfNotExists));
 
-        protected override bool IsResourceInternal(string location) => File.Exists(location);
-        protected override Task<bool> IsResourceAsyncInternal(string location) => Task.Run(() => File.Exists(location));
-        protected override bool IsCollectionInternal(string location) => Directory.Exists(location);
-        protected override Task<bool> IsCollectionAsyncInternal(string location) => Task.Run(() => Directory.Exists(location));
-        protected override IEnumerable<string> EnumerateCollectionInternal(string location) => Directory.EnumerateFileSystemEntries(location);
-        protected override IAsyncEnumerable<string> EnumerateCollectionAsyncInternal(string location) => Directory.EnumerateFileSystemEntries(location).ToAsyncEnumerable();
-        protected override StorageWatcher CreateWatcherInternal(string location) => new FileStorageWatcher(location);
+        protected override Task<bool> VerifyCollectionAsyncInternal(StorageKey collectionLocation, bool createIfNotExists) => Task.Run(() => VerifyCollectionInternal(collectionLocation, createIfNotExists));
+
+        protected override bool VerifyResourceInternal(StorageKey location, bool fix)
+        {
+            string path = Path.Combine(location.Path);
+            if (!File.Exists(path))
+            {
+                if (!fix) { return false; }
+                VerifyCollectionInternal(new StorageKey(Path.GetDirectoryName(path)!), true);
+                File.Create(path).Dispose();
+            }
+            return true;
+        }
+        protected override Task<bool> VerifyResourceAsyncInternal(StorageKey collectionLocation, bool createIfNotExists) => Task.Run(() => VerifyResourceInternal(collectionLocation, createIfNotExists));
+
+        protected override bool IsResourceInternal(StorageKey location) => File.Exists(Path.Combine(location.Path));
+        protected override Task<bool> IsResourceAsyncInternal(StorageKey location) => Task.Run(() => File.Exists(Path.Combine(location.Path)));
+        protected override bool IsCollectionInternal(StorageKey location) => Directory.Exists(Path.Combine(location.Path));
+        protected override Task<bool> IsCollectionAsyncInternal(StorageKey location) => Task.Run(() => Directory.Exists(Path.Combine(location.Path)));
+        protected override IEnumerable<string> EnumerateCollectionInternal(StorageKey location) => Directory.EnumerateFileSystemEntries(Path.Combine(location.Path));
+        protected override IAsyncEnumerable<string> EnumerateCollectionAsyncInternal(StorageKey location) => Directory.EnumerateFileSystemEntries(Path.Combine(location.Path)).ToAsyncEnumerable();
+        protected override StorageWatcher CreateWatcherInternal(StorageKey location) => new FileStorageWatcher(Path.Combine(location.Path));
     }
 }
