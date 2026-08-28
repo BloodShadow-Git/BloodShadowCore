@@ -4,4 +4,5 @@
   <Project Path="BloodShadow.Core.Operations/BloodShadow.Core.Operations.csproj" />
   <Project Path="BloodShadow.Core.SaveSystem/BloodShadow.Core.SaveSystem.csproj" />
   <Project Path="BloodShadow.Core/BloodShadow.Core.csproj" />
+  <Project Path="BloodShadow.Utils/BloodShadow.Utils.csproj" />
 </Solution>
