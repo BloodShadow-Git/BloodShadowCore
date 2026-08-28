@@ -1,6 +1,4 @@
-﻿using BloodShadow.Core;
-
-namespace BloodShadow.Core.ConsoleInterface
+﻿namespace BloodShadow.Core.ConsoleInterface
 {
     public class DefaultConsoleInterface : ConsoleInterface
     {
