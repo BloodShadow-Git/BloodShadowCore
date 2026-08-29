@@ -62,7 +62,6 @@ namespace BloodShadow.Core.Operations
             {
                 _current = Operations.Dequeue();
                 if (_current == null) { continue; }
-                _completed.Add(_current);
                 CompositeDisposable cd =
                 [
                     _current.Progress.Subscribe(_ => UpdateProgress()),
@@ -74,10 +73,11 @@ namespace BloodShadow.Core.Operations
                 ];
                 UpdateDescription();
                 await _current;
+                _completed.Add(_current);
                 cd.Dispose();
             }
             while (_completed.Count < OperationsCount.CurrentValue) { await Task.Yield(); }
-            Dispose();
+            DisposeInternal();
             _isRunning = false;
         }
 
@@ -93,10 +93,9 @@ namespace BloodShadow.Core.Operations
             _description.Value = $"({_progress.CurrentValue:P2}) {_current.Description.CurrentValue}";
         }
 
-        public override object Clone() => new OperationQueue(Operations.ToArray());
-        public override void Dispose()
+        public override object Clone() => new OperationQueue([.. Operations]);
+        protected override void DisposeInternal()
         {
-            GC.SuppressFinalize(this);
             _progress.Value = 1f;
             _isDone.Value = true;
             OnCompletedAction?.Invoke();

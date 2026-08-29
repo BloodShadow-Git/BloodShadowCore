@@ -1,4 +1,5 @@
-﻿using R3;
+﻿using BloodShadow.Core.Logger;
+using R3;
 using System.Runtime.CompilerServices;
 
 namespace BloodShadow.Core.Operations
@@ -35,13 +36,13 @@ namespace BloodShadow.Core.Operations
         }
         public ActionOperation(Func<ActionOperationProgress, Task> func) : this()
         {
-            _aop = new();
+            _aop = new(_operationGUID);
             SetupAOP();
             _task = func.Invoke(_aop);
         }
         public ActionOperation(Action<ActionOperationProgress> action) : this()
         {
-            _aop = new();
+            _aop = new(_operationGUID);
             SetupAOP();
             _task = new(() => action?.Invoke(_aop), _tokenSource.Token);
         }
@@ -90,7 +91,7 @@ namespace BloodShadow.Core.Operations
                 {
                     _isDone.Value = false;
                     _task?.Wait();
-                    Dispose();
+                    DisposeInternal();
                 }, _tokenSource.Token);
             }
             return _awaiter;
@@ -102,9 +103,8 @@ namespace BloodShadow.Core.Operations
             return this;
         }
         public override object Clone() => new ActionOperation(this);
-        public override void Dispose()
+        protected override void DisposeInternal()
         {
-            GC.SuppressFinalize(this);
             _tokenSource?.Cancel();
             _task?.Dispose();
             _compositeDisposable?.Dispose();
@@ -126,14 +126,14 @@ namespace BloodShadow.Core.Operations
 
         public ActionOperation(Func<ActionOperationProgress, Task<T?>> func) : base()
         {
-            _aop = new();
+            _aop = new(_operationGUID);
             SetupAOP();
             _task = func.Invoke(_aop);
             SetupAwaiter();
         }
         public ActionOperation(Func<ActionOperationProgress, T?> action) : base()
         {
-            _aop = new ActionOperationProgress();
+            _aop = new(_operationGUID);
             SetupAOP();
             _task = new(() => action.Invoke(_aop), _tokenSource.Token);
             SetupAwaiter();
@@ -171,7 +171,7 @@ namespace BloodShadow.Core.Operations
             Task.Run(() =>
             {
                 while (!_tokenSource.IsCancellationRequested && !(_task?.IsCompleted ?? false)) { _isDone.Value = false; }
-                Dispose();
+                DisposeInternal();
             });
         }
         new public virtual OperationAwaiter GetAwaiter()
@@ -187,9 +187,8 @@ namespace BloodShadow.Core.Operations
             return this;
         }
         public override object Clone() => new ActionOperation<T>(this);
-        public override void Dispose()
+        protected override void DisposeInternal()
         {
-            GC.SuppressFinalize(this);
             _tokenSource?.Cancel();
             _task?.Dispose();
             _compositeDisposable?.Dispose();
@@ -231,18 +230,23 @@ namespace BloodShadow.Core.Operations
         public readonly ReactiveProperty<int> Priority;
         public readonly ReactiveProperty<string> Description;
 
-        public ActionOperationProgress()
+        private LoggerLabel _label;
+
+        public ActionOperationProgress(Guid parentTaskGUID)
         {
             Progress = new();
             AllowSceneActivation = new();
             IsDone = new();
             Priority = new();
             Description = new();
+            _label = new($"AOP {Guid.NewGuid()} for {parentTaskGUID} - ");
+            _label.WriteLine(MessageChanel.INFO, "Created", null, null);
         }
 
         public void Dispose()
         {
             GC.SuppressFinalize(this);
+            _label.WriteLine(MessageChanel.DEBUG, "AOP was disposed", null, null);
             Progress.Dispose();
             AllowSceneActivation.Dispose();
             IsDone.Dispose();

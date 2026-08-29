@@ -13,6 +13,10 @@ namespace BloodShadow.Core.SaveSystem.StorageModule
             _fsw.Renamed += (obj, e) => { OnRenamedInternal.OnNext((e.OldFullPath, e.FullPath)); };
         }
 
-        public override void Dispose() => _fsw.Dispose();
+        public override void Dispose()
+        {
+            GC.SuppressFinalize(this);
+            _fsw.Dispose();
+        }
     }
 }

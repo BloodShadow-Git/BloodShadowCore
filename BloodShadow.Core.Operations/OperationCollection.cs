@@ -123,9 +123,8 @@ namespace BloodShadow.Core.Operations
 
         public void Add(IEnumerable<Operation> operations) { foreach (Operation operation in operations) { Add(operation); } }
 
-        public override async void Dispose()
+        protected override async void DisposeInternal()
         {
-            GC.SuppressFinalize(this);
             foreach (Operation operation in _operations) { operation?.Dispose(); }
             _waitTaskSource?.Cancel();
             if (_waitTask != null) { await _waitTask; }

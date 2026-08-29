@@ -1,4 +1,5 @@
-﻿using R3;
+﻿using BloodShadow.Core.Logger;
+using R3;
 using System.Runtime.CompilerServices;
 
 namespace BloodShadow.Core.Operations
@@ -12,6 +13,9 @@ namespace BloodShadow.Core.Operations
         public abstract ReadOnlyReactiveProperty<string> Description { get; }
         protected OperationAwaiter? _awaiter;
 
+        protected Guid _operationGUID { private set; get; }
+        protected LoggerLabel _label { private set; get; }
+
         public event Action OnCompleted
         {
             add => OnCompletedAction += value;
@@ -19,7 +23,17 @@ namespace BloodShadow.Core.Operations
         }
         protected Action? OnCompletedAction;
 
-        public abstract void Dispose();
+        public Operation()
+        {
+            _operationGUID = Guid.NewGuid();
+            _label = new($"[{GetType().Name} ({_operationGUID})]");
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+        }
+        protected abstract void DisposeInternal();
         public abstract object Clone();
         public virtual void Wait() { while (!IsDone.CurrentValue) { } }
         public virtual void AddCompleted(Action action) { OnCompleted += action; }
