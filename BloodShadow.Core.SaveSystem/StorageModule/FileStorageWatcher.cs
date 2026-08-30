@@ -2,7 +2,8 @@ namespace BloodShadow.Core.SaveSystem.StorageModule
 {
     public class FileStorageWatcher : StorageWatcher
     {
-        private FileSystemWatcher _fsw;
+        private readonly FileSystemWatcher _fsw;
+        public override string Filter { get => _fsw.Filter; set => _fsw.Filter = value; }
 
         public FileStorageWatcher(string location) : base()
         {
@@ -11,12 +12,7 @@ namespace BloodShadow.Core.SaveSystem.StorageModule
             _fsw.Deleted += (obj, e) => { OnDeletedInternal.OnNext(e.FullPath); };
             _fsw.Changed += (obj, e) => { OnChangedInternal.OnNext(e.FullPath); };
             _fsw.Renamed += (obj, e) => { OnRenamedInternal.OnNext((e.OldFullPath, e.FullPath)); };
-        }
-
-        public override void Dispose()
-        {
-            GC.SuppressFinalize(this);
-            _fsw.Dispose();
+            CD.Add(_fsw);
         }
     }
 }
