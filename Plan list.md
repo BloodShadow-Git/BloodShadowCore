@@ -11,6 +11,7 @@
 - Create MVVM UI manager
 
 Copy:
+
 - Profile system
 - Systems
 - Not full State machine
