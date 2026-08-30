@@ -154,5 +154,6 @@ namespace BloodShadow.Core.SaveSystem
         public virtual Task<bool> VerifyCollectionAsync(StorageKey location, bool createIfNotExists) => IOModule.VerifyCollectionAsync(location, createIfNotExists);
         public virtual bool VerifyResource(StorageKey location, bool createIfNotExists) => IOModule.VerifyResource(location, createIfNotExists);
         public virtual Task<bool> VerifyResourceAsync(StorageKey location, bool createIfNotExists) => IOModule.VerifyResourceAsync(location, createIfNotExists);
+        public virtual StorageWatcher CreateWatcher(StorageKey location) => IOModule.CreateWatcher(location);
     }
 }
