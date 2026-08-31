@@ -1,6 +1,4 @@
-﻿using R3;
-
-namespace BloodShadow.Core.SaveSystem.StorageModule
+﻿namespace BloodShadow.Core.SaveSystem.StorageModule
 {
     public class FileStorageModule : StorageModule
     {
@@ -46,10 +44,92 @@ namespace BloodShadow.Core.SaveSystem.StorageModule
 
         protected override bool IsResourceInternal(StorageKey location) => File.Exists(Path.Combine(location.Path));
         protected override Task<bool> IsResourceAsyncInternal(StorageKey location) => Task.Run(() => File.Exists(Path.Combine(location.Path)));
+
         protected override bool IsCollectionInternal(StorageKey location) => Directory.Exists(Path.Combine(location.Path));
         protected override Task<bool> IsCollectionAsyncInternal(StorageKey location) => Task.Run(() => Directory.Exists(Path.Combine(location.Path)));
-        protected override IEnumerable<string> EnumerateCollectionInternal(StorageKey location) => Directory.EnumerateFileSystemEntries(Path.Combine(location.Path));
-        protected override IAsyncEnumerable<string> EnumerateCollectionAsyncInternal(StorageKey location) => Directory.EnumerateFileSystemEntries(Path.Combine(location.Path)).ToAsyncEnumerable();
+
+        protected override IEnumerable<Resource> EnumerateCollectionInternal(StorageKey location)
+        {
+            string[] fsEntries = [.. Directory.EnumerateFileSystemEntries(Path.Combine(location.Path))];
+            Resource[] result = new Resource[fsEntries.Length];
+            for (int i = 0; i < fsEntries.Length; i++)
+            {
+                ResourceType resourceType = ExistsInternal(new(fsEntries[i]));
+                result[i] = new(fsEntries[i], resourceType);
+            }
+            return result;
+        }
+        protected override async IAsyncEnumerable<Resource> EnumerateCollectionAsyncInternal(StorageKey location)
+        {
+            string[] fsEntries = [.. Directory.EnumerateFileSystemEntries(Path.Combine(location.Path))];
+            for (int i = 0; i < fsEntries.Length; i++)
+            {
+                ResourceType resourceType = await ExistsAsyncInternal(new(fsEntries[i]));
+                yield return new(fsEntries[i], resourceType);
+            }
+        }
+
         protected override StorageWatcher CreateWatcherInternal(StorageKey location) => new FileStorageWatcher(Path.Combine(location.Path));
+
+        protected override bool CreateResourceInternal(StorageKey location)
+        {
+            File.Create(Path.Combine(location.Path)).Close();
+            return true;
+        }
+        protected override async Task<bool> CreateResourceAsyncInternal(StorageKey location)
+        {
+            File.Create(Path.Combine(location.Path)).Close();
+            return true;
+        }
+
+        protected override bool RemoveResourceInternal(StorageKey location)
+        {
+            File.Delete(Path.Combine(location.Path));
+            return true;
+        }
+        protected override async Task<bool> RemoveResourceAsyncInternal(StorageKey location)
+        {
+            File.Delete(Path.Combine(location.Path));
+            return true;
+        }
+
+        protected override bool CreateCollectionInternal(StorageKey location)
+        {
+            Directory.CreateDirectory(Path.Combine(location.Path));
+            return true;
+        }
+        protected override async Task<bool> CreateCollectionAsyncInternal(StorageKey location)
+        {
+            Directory.CreateDirectory(Path.Combine(location.Path));
+            return true;
+        }
+
+        protected override bool RemoveCollectionInternal(StorageKey location)
+        {
+            Directory.Delete(Path.Combine(location.Path));
+            return true;
+        }
+        protected override async Task<bool> RemoveCollectionAsyncInternal(StorageKey location)
+        {
+            Directory.Delete(Path.Combine(location.Path));
+            return true;
+        }
+
+        protected override ResourceType ExistsInternal(StorageKey location)
+        {
+            string path = Path.Combine(location.Path);
+            ResourceType resourceType = ResourceType.Unknown;
+            if (File.Exists(path)) { resourceType |= ResourceType.Resource; }
+            if (Directory.Exists(path)) { resourceType |= ResourceType.Collection; }
+            return resourceType;
+        }
+        protected override async Task<ResourceType> ExistsAsyncInternal(StorageKey location)
+        {
+            string path = Path.Combine(location.Path);
+            ResourceType resourceType = ResourceType.Unknown;
+            if (File.Exists(path)) { resourceType |= ResourceType.Resource; }
+            if (Directory.Exists(path)) { resourceType |= ResourceType.Collection; }
+            return resourceType;
+        }
     }
 }
