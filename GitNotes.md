@@ -125,3 +125,5 @@ git push origin dev --force       # Силой перезаписываем чи
 * git checkout - — Вернуться на предыдущую ветку, в которой вы были шаг назад.
 * git branch -a — Посмотреть список всех веток (и локальных, и на сервере).
 * git push <remote_name> :<branch_name> - для удаления удалённой (на сервере) ветки
+* git fetch <remote_name> <branch_name> - насильно вытянуть ветку с репозитория
+* git reset --hard <remote_name>/<branch_name> - принудительно сбросить локальные изменения

@@ -13,6 +13,5 @@
 
 Copy:
 
-- Profile system
 - Systems
 - Not full State machine
